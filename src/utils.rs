@@ -1,5 +1,7 @@
+use crate::models::AirtimeInputRecipient;
 use reqwest::header::HeaderMap;
 use reqwest::header::{ACCEPT, CONTENT_TYPE};
+use serde_json::Result;
 
 pub fn build_headers(api_key: String) -> HeaderMap {
     let mut headers = HeaderMap::new();
@@ -12,4 +14,16 @@ pub fn build_headers(api_key: String) -> HeaderMap {
     headers.insert("apiKey", api_key.parse().unwrap());
 
     headers
+}
+
+pub fn parse_airtime_input_recipients(
+    airtime_input_recipients: Vec<AirtimeInputRecipient>,
+) -> String {
+    //std::result::Result<String, serde_json::Error>
+    let _result = serde_json::to_string(&airtime_input_recipients);
+    let _result = match _result {
+        Ok(x) => x,
+        Err(_) => String::from(""),
+    };
+    _result
 }
