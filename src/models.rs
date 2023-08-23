@@ -65,6 +65,7 @@ struct SMSMessageData {
 pub struct ResultSmsMessage {
     SMSMessageData: SMSMessageData,
 }
+
 // Airtime request
 #[derive(Debug)]
 pub struct AirtimeRecipient {
@@ -79,7 +80,7 @@ impl AirtimeRecipient {
             return Err(String::from("phone number is empty"));
         }
 
-        if _amount == 0 {
+        if _amount <= 0 {
             return Err(String::from("Invalid amount"));
         }
 
@@ -120,6 +121,28 @@ impl AirtimeMessage {
         }
 
         // validate _recipients
+        let _x = _recipients.len();
+        if _x > 0 {
+            for _recipient in _recipients.iter() {
+                let phone_number = _recipient.get_phone_number();
+                let _amount = _recipient.get_amount();
+                let currency_code = _recipient.get_currency_code();
+
+                if phone_number.is_empty() || phone_number.replace(" ", "").trim().len() == 0 {
+                    return Err(String::from("phone number is empty"));
+                }
+
+                if _amount <= 0 {
+                    return Err(String::from("Invalid amount"));
+                }
+
+                if currency_code.is_empty() || currency_code.replace(" ", "").trim().len() == 0 {
+                    return Err(String::from("currency code is empty"));
+                }
+            }
+        } else {
+            return Err(String::from("Invalid recipients"));
+        }
 
         Ok(Self {
             max_num_retry,
@@ -171,3 +194,177 @@ pub struct AirtimeInputRecipient {
 pub struct AirtimeInputRecipients {
     pub recipients: Vec<AirtimeInputRecipient>,
 }
+
+// Mobile Data request
+#[derive(Debug)]
+pub struct MobileDataRecipient {
+    phone_number: String,
+}
+
+impl MobileDataRecipient {
+    pub fn new(phone_number: String) -> Result<Self, String> {
+        if phone_number.is_empty() || phone_number.replace(" ", "").trim().len() == 0 {
+            return Err(String::from("phone number is empty"));
+        }
+
+        Ok(Self { phone_number })
+    }
+    pub fn get_phone_number(&self) -> String {
+        let phone_number = &self.phone_number;
+        phone_number.to_string()
+    }
+}
+
+#[derive(Debug)]
+pub struct MobileDataMessage {
+    product_name: String,
+    _recipients: Vec<MobileDataRecipient>,
+    _quantity: u32,
+    _unit: String,
+    _validity: String,
+    is_promo_bundle: bool,
+}
+
+impl MobileDataMessage {
+    pub fn new(
+        product_name: String,
+        _recipients: Vec<MobileDataRecipient>,
+        _quantity: u32,
+        _unit: String,
+        _validity: String,
+        is_promo_bundle: bool,
+    ) -> Result<Self, String> {
+        // product_name is optional
+        /*
+        if product_name.is_empty() || product_name.replace(" ", "").trim().len() == 0 {
+            return Err(String::from("product name is empty"));
+        }
+        */
+
+        // validate _recipients
+        let _x = _recipients.len();
+        if _x > 0 {
+            for _recipient in _recipients.iter() {
+                let phone_number = _recipient.get_phone_number();
+
+                if phone_number.is_empty() || phone_number.replace(" ", "").trim().len() == 0 {
+                    return Err(String::from("phone number is empty"));
+                }
+            }
+        } else {
+            return Err(String::from("Invalid recipients"));
+        }
+
+        if _quantity <= 0 {
+            return Err(String::from("Invalid quantity"));
+        }
+
+        if _unit.is_empty() || _unit.replace(" ", "").trim().len() == 0 {
+            return Err(String::from("unit is empty"));
+        }
+
+        if _validity.is_empty() || _validity.replace(" ", "").trim().len() == 0 {
+            return Err(String::from("validity is empty"));
+        }
+
+        Ok(Self {
+            product_name,
+            _recipients,
+            _quantity,
+            _unit,
+            _validity,
+            is_promo_bundle,
+        })
+    }
+    pub fn get_product_name(&self) -> String {
+        let product_name = &self.product_name;
+        product_name.to_string()
+    }
+    pub fn get_recipients(&self) -> &Vec<MobileDataRecipient> {
+        let _recipients = &self._recipients;
+        _recipients
+    }
+    pub fn get_quantity(&self) -> u32 {
+        let _quantity = &self._quantity;
+        *_quantity
+    }
+    pub fn get_unit(&self) -> String {
+        let _unit = &self._unit;
+        _unit.to_string()
+    }
+    pub fn get_validity(&self) -> String {
+        let _validity = &self._validity;
+        _validity.to_string()
+    }
+    pub fn get_is_promo_bundle(&self) -> bool {
+        let is_promo_bundle = &self.is_promo_bundle;
+        *is_promo_bundle
+    }
+}
+
+// Mobile Data response
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+struct MobileDataResponse {
+    phoneNumber: Option<String>,
+    provider: Option<String>,
+    status: Option<String>,
+    transactionId: Option<String>,
+    value: Option<String>,
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct ResultMobileDataMessage {
+    entries: Vec<MobileDataResponse>,
+}
+
+// Mobile Data input
+#[derive(Serialize, Debug)]
+#[allow(non_snake_case)]
+pub struct MobileDataInputRecipient {
+    pub phoneNumber: String,
+}
+
+#[derive(Serialize, Debug)]
+#[allow(non_snake_case)]
+pub struct MobileDataInputRecipients {
+    pub recipients: Vec<MobileDataInputRecipient>,
+}
+
+#[derive(Debug)]
+pub enum ParamValue {
+    Str(String),
+    Int(u32),
+    Bool(bool),
+}
+
+impl Serialize for ParamValue {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            ParamValue::Str(s) => serializer.serialize_str(s),
+            ParamValue::Int(i) => serializer.serialize_u32(*i),
+            ParamValue::Bool(b) => serializer.serialize_bool(*b),
+        }
+    }
+}
+/*
+#[derive(Serialize, Debug)]
+pub struct MobileDataPhoneNumberRequest {
+    pub phoneNumber: String,
+}
+
+#[derive(Serialize, Debug)]
+pub struct MobileDataRequest {
+    pub username: String,
+    pub productName: String,
+    pub recipients: Vec<MobileDataPhoneNumberRequest>,
+    pub quantity: u32,
+    pub unit: String,
+    pub validity: String,
+    pub isPromoBundle: bool,
+}
+*/

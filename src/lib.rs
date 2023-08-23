@@ -1,21 +1,25 @@
 mod airtime;
+mod mobiledata;
 pub mod models;
 mod sms;
 mod utils;
 
 use models::{
-    AirtimeInputRecipient, AirtimeInputRecipients, AirtimeMessage, ResultAirtimeMessage,
-    ResultSmsMessage, SmsMessage,
+    AirtimeInputRecipient, AirtimeMessage, MobileDataMessage, ResultAirtimeMessage,
+    ResultMobileDataMessage, ResultSmsMessage, SmsMessage,
 };
 use utils::parse_airtime_input_recipients;
 
-//use serde_json::Result;
+use crate::{models::MobileDataInputRecipient, utils::parse_mobile_data_input_recipients};
 
 const SMS_URL_SANDBOX: &str = "https://api.sandbox.africastalking.com/version1/messaging";
 const SMS_URL_PROD: &str = "https://api.africastalking.com/version1/messaging";
 const DEFAULT_SENDER: &str = "AFRICASTKNG";
 const AIRTIME_URL_SANDBOX: &str = "https://api.sandbox.africastalking.com/version1/airtime/send";
 const AIRTIME_URL_PROD: &str = "https://api.africastalking.com/version1/airtime/send";
+const MOBILE_DATA_URL_SANDBOX: &str =
+    "https://payments.sandbox.africastalking.com/mobile/data/request";
+const MOBILE_DATA_URL_PROD: &str = "https://payments.africastalking.com/mobile/data/request";
 
 #[derive(Debug)]
 pub struct AfricasTalking {
@@ -23,6 +27,7 @@ pub struct AfricasTalking {
     api_key: String,
     sms_url: String,
     airtime_url: String,
+    mobile_data_url: String,
     _env: String,
 }
 
@@ -55,6 +60,11 @@ impl AfricasTalking {
             _ => AIRTIME_URL_SANDBOX.to_string(),
         };
 
+        let mobile_data_url: String = match _env {
+            "prod" => MOBILE_DATA_URL_PROD.to_string(),
+            _ => MOBILE_DATA_URL_SANDBOX.to_string(),
+        };
+
         let _env = _env.to_string();
 
         Ok(Self {
@@ -62,6 +72,7 @@ impl AfricasTalking {
             api_key,
             sms_url,
             airtime_url,
+            mobile_data_url,
             _env,
         })
     }
@@ -127,7 +138,6 @@ impl AfricasTalking {
     }
 
     // Airtime
-
     pub async fn send_airtime_async(
         &self,
         airtime_message: AirtimeMessage,
@@ -138,8 +148,8 @@ impl AfricasTalking {
         let api_key = &self.api_key;
         let api_url = &self.airtime_url;
         let mut airtime_input_recipients: Vec<AirtimeInputRecipient> = Vec::new();
-        let x = _recipients.len();
-        if x > 0 {
+        let _x = _recipients.len();
+        if _x > 0 {
             for _recipient in _recipients.iter() {
                 let phone_number: String = _recipient.get_phone_number();
                 let _amount: u32 = _recipient.get_amount();
@@ -158,29 +168,6 @@ impl AfricasTalking {
             }
         }
 
-        /*
-        if let Ok(_recipients) = _result {
-            println!("_recipients: {:?}", &_recipients);
-
-            let _output = airtime::send_airtime_async(
-                max_num_retry,
-                _recipients,
-                user_name.to_string(),
-                api_key.to_string(),
-                api_url.to_string(),
-            );
-
-            let _result = _output.await;
-
-            return _result;
-        } else if let Err(e) = _result {
-            println!("{:?}", e);
-            return Err(e);
-        } else {
-            println!("Unexpected error occured during processing");
-        }
-        */
-
         // convert _recipients to json
         let _recipients = parse_airtime_input_recipients(airtime_input_recipients);
         println!("_recipients: {:?}", &_recipients);
@@ -195,7 +182,56 @@ impl AfricasTalking {
 
         let _result = _output.await;
 
-        return _result;
+        _result
+    }
+
+    // Mobile Data
+    pub async fn send_mobiledata_async(
+        &self,
+        mobile_data_message: MobileDataMessage,
+    ) -> std::result::Result<Option<ResultMobileDataMessage>, reqwest::Error> {
+        let product_name = mobile_data_message.get_product_name();
+        let _recipients = mobile_data_message.get_recipients();
+        let _quantity = mobile_data_message.get_quantity();
+        let _unit = mobile_data_message.get_unit();
+        let _validity = mobile_data_message.get_validity();
+        let is_promo_bundle = mobile_data_message.get_is_promo_bundle();
+        let user_name = &self.user_name;
+        let api_key = &self.api_key;
+        let api_url = &self.mobile_data_url;
+        let mut mobile_data_input_recipients: Vec<MobileDataInputRecipient> = Vec::new();
+        let _x = _recipients.len();
+        if _x > 0 {
+            for _recipient in _recipients.iter() {
+                let phone_number: String = _recipient.get_phone_number();
+
+                let mobile_data_input_recipient = MobileDataInputRecipient {
+                    phoneNumber: phone_number,
+                };
+
+                mobile_data_input_recipients.push(mobile_data_input_recipient);
+            }
+        }
+
+        // convert _recipients to json
+        let _recipients = parse_mobile_data_input_recipients(mobile_data_input_recipients);
+        println!("_recipients: {:?}", &_recipients);
+
+        let _output = mobiledata::send_mobiledata_async(
+            product_name,
+            _recipients,
+            _quantity,
+            _unit,
+            _validity,
+            is_promo_bundle,
+            user_name.to_string(),
+            api_key.to_string(),
+            api_url.to_string(),
+        );
+
+        let _result = _output.await;
+
+        _result
     }
 }
 
