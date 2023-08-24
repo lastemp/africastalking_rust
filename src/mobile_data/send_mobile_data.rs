@@ -1,4 +1,4 @@
-use crate::models::models::{ParamValue, ResultMobileDataMessage};
+use crate::models::models::ResultMobileDataMessage;
 use crate::util::util::build_headers;
 use reqwest::StatusCode;
 

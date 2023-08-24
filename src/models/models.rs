@@ -423,3 +423,54 @@ struct FetchMessagesData {
 pub struct ResultFetchSmsMessages {
     SMSMessageData: FetchMessagesData,
 }
+
+// Fetch Transaction Airtime response
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct ResultFetchTransactionAirtimeMessage {
+    status: Option<String>,
+}
+
+// Fetch Transaction Mobile Data response
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct RequestMetadata {
+    reason: Option<String>,
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct ProviderMetadata {
+    recipientIsRegistered: Option<String>,
+    recipientName: Option<String>,
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct FetchTransactionMobileDataMessage {
+    requestMetadata: RequestMetadata,
+    sourceType: Option<String>,
+    source: Option<String>,
+    provider: Option<String>,
+    destinationType: Option<String>,
+    description: Option<String>,
+    providerChannel: Option<String>,
+    transactionFee: Option<String>,
+    providerMetadata: ProviderMetadata,
+    status: Option<String>,
+    productName: Option<String>,
+    category: Option<String>,
+    transactionDate: Option<String>,
+    destination: Option<String>,
+    value: Option<String>,
+    transactionId: Option<String>,
+    creationTime: Option<String>,
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct ResultFetchTransactionMobileDataMessage {
+    status: Option<String>,
+    data: FetchTransactionMobileDataMessage,
+    errorMessage: Option<String>,
+}
