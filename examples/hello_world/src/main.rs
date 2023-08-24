@@ -4,14 +4,14 @@ use africastalking_rust::models::models::{
 use africastalking_rust::AfricasTalking;
 
 // SANDBOX
-const USERNAME_SANDBOX: &str = "sandbox";
-const API_KEY_SANDBOX: &str = "009d530f61449b88913e51381920f75ff33b68c6fcf09433e16bb5c6dcd5b92f";
+const USERNAME_SANDBOX: &str = "***";
+const API_KEY_SANDBOX: &str = "***";
 
 // PROD
-const USERNAME_PROD: &str = "lastemperor";
-const API_KEY_PROD: &str = "abb88a445ce79e3227d85c3b22156c9431d812f37ec01e92de8f35c6676bfb82";
+const USERNAME_PROD: &str = "***";
+const API_KEY_PROD: &str = "***";
 
-const PHONE_NO: &str = "+254723083761";
+const PHONE_NO: &str = "***";
 
 #[tokio::main]
 async fn main() {
