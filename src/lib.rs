@@ -1,16 +1,34 @@
-mod airtime;
-mod mobiledata;
-pub mod models;
-mod sms;
-mod utils;
+mod sms {
+    pub mod bulk {
+        pub mod send_sms;
+    }
+}
 
-use models::{
+mod airtime {
+    pub mod send_airtime;
+}
+
+mod mobile_data {
+    pub mod send_mobile_data;
+}
+
+mod util {
+    pub mod util;
+}
+
+pub mod models {
+    pub mod models;
+}
+
+use models::models::{
     AirtimeInputRecipient, AirtimeMessage, MobileDataMessage, ResultAirtimeMessage,
     ResultMobileDataMessage, ResultSmsMessage, SmsMessage,
 };
-use utils::parse_airtime_input_recipients;
+use util::util::parse_airtime_input_recipients;
 
-use crate::{models::MobileDataInputRecipient, utils::parse_mobile_data_input_recipients};
+use crate::{
+    models::models::MobileDataInputRecipient, util::util::parse_mobile_data_input_recipients,
+};
 
 const SMS_URL_SANDBOX: &str = "https://api.sandbox.africastalking.com/version1/messaging";
 const SMS_URL_PROD: &str = "https://api.africastalking.com/version1/messaging";
@@ -78,7 +96,7 @@ impl AfricasTalking {
     }
 
     // SMS
-    pub async fn send_message_async(
+    pub async fn send_bulk_message_async(
         &self,
         sms_message: SmsMessage,
     ) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
@@ -94,7 +112,7 @@ impl AfricasTalking {
             _ => DEFAULT_SENDER.to_string(),
         };
 
-        let _output = sms::send_message_async(
+        let _output = sms::bulk::send_sms::send_message_async(
             _message,
             _to,
             _from,
@@ -109,7 +127,7 @@ impl AfricasTalking {
     }
 
     // SMS
-    pub fn send_message(
+    pub fn send_bulk_message(
         &self,
         sms_message: SmsMessage,
     ) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
@@ -125,7 +143,7 @@ impl AfricasTalking {
             _ => DEFAULT_SENDER.to_string(),
         };
 
-        let _result = sms::send_message(
+        let _result = sms::bulk::send_sms::send_message(
             _message,
             _to,
             _from,
@@ -172,7 +190,7 @@ impl AfricasTalking {
         let _recipients = parse_airtime_input_recipients(airtime_input_recipients);
         println!("_recipients: {:?}", &_recipients);
 
-        let _output = airtime::send_airtime_async(
+        let _output = airtime::send_airtime::send_airtime_async(
             max_num_retry,
             _recipients,
             user_name.to_string(),
@@ -217,7 +235,7 @@ impl AfricasTalking {
         let _recipients = parse_mobile_data_input_recipients(mobile_data_input_recipients);
         println!("_recipients: {:?}", &_recipients);
 
-        let _output = mobiledata::send_mobiledata_async(
+        let _output = mobile_data::send_mobile_data::send_mobile_data_async(
             product_name,
             _recipients,
             _quantity,

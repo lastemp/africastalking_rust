@@ -1,4 +1,4 @@
-use africastalking_rust::models::{
+use africastalking_rust::models::models::{
     AirtimeMessage, AirtimeRecipient, MobileDataMessage, MobileDataRecipient, SmsMessage,
 };
 use africastalking_rust::AfricasTalking;
@@ -24,7 +24,7 @@ async fn main() {
     x.await;
 }
 
-async fn test_send_message_async() {
+async fn test_send_bulk_message_async() {
     /*
     let user_name = USERNAME_SANDBOX.to_string();
     let api_key = API_KEY_SANDBOX.to_string();
@@ -41,7 +41,7 @@ async fn test_send_message_async() {
 
         let _result = SmsMessage::new(_message, _to, _from);
         if let Ok(sms_message) = _result {
-            let _output = africas_talking.send_message_async(sms_message);
+            let _output = africas_talking.send_bulk_message_async(sms_message);
             let _result = _output.await;
             if let Ok(result_message) = _result {
                 println!("result_message: {:?}", result_message);
@@ -69,7 +69,7 @@ async fn test_send_message_async() {
     }
 }
 
-fn test_send_message() {
+fn test_send_bulk_message() {
     /*
     let user_name = USERNAME_SANDBOX.to_string();
     let api_key = API_KEY_SANDBOX.to_string();
@@ -86,7 +86,7 @@ fn test_send_message() {
 
         let _result = SmsMessage::new(_message, _to, _from);
         if let Ok(sms_message) = _result {
-            let _result = africas_talking.send_message(sms_message);
+            let _result = africas_talking.send_bulk_message(sms_message);
             if let Ok(result_message) = _result {
                 println!("result_message: {:?}", result_message);
                 if let Some(result_sms) = result_message {
