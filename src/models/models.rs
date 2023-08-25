@@ -57,25 +57,18 @@ impl FetchSmsMessage {
     }
 }
 
-pub struct FetchSubscriptionsMessage {
+pub struct CreateSubscriptionsMessage {
     short_code: String,
     _keyword: String,
     phone_number: String,
-    last_received_id: Option<u32>,
 }
 
-impl FetchSubscriptionsMessage {
-    pub fn new(
-        short_code: String,
-        _keyword: String,
-        phone_number: String,
-        last_received_id: Option<u32>,
-    ) -> Result<Self, String> {
+impl CreateSubscriptionsMessage {
+    pub fn new(short_code: String, _keyword: String, phone_number: String) -> Result<Self, String> {
         Ok(Self {
             short_code,
             _keyword,
             phone_number,
-            last_received_id,
         })
     }
     pub fn get_short_code(&self) -> &String {
@@ -89,6 +82,34 @@ impl FetchSubscriptionsMessage {
     pub fn get_phone_number(&self) -> &String {
         let phone_number = &self.phone_number;
         phone_number
+    }
+}
+
+pub struct FetchSubscriptionsMessage {
+    short_code: String,
+    _keyword: String,
+    last_received_id: Option<u32>,
+}
+
+impl FetchSubscriptionsMessage {
+    pub fn new(
+        short_code: String,
+        _keyword: String,
+        last_received_id: Option<u32>,
+    ) -> Result<Self, String> {
+        Ok(Self {
+            short_code,
+            _keyword,
+            last_received_id,
+        })
+    }
+    pub fn get_short_code(&self) -> &String {
+        let short_code = &self.short_code;
+        short_code
+    }
+    pub fn get_keyword(&self) -> &String {
+        let _keyword = &self._keyword;
+        _keyword
     }
     pub fn get_last_received_id(&self) -> Option<u32> {
         let last_received_id = &self.last_received_id;
@@ -482,8 +503,8 @@ pub struct MobileDataRequest {
 #[derive(Deserialize, Debug)]
 #[allow(non_snake_case)]
 pub struct ResultPremiumSmsSubscriptionMessage {
-    description: Option<String>,
-    token: Option<String>,
+    pub description: Option<String>,
+    pub token: Option<String>,
 }
 
 // Premium Sms Fetch Subscription response

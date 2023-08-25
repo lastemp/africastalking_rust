@@ -31,6 +31,7 @@ pub async fn generate_checkout_token_async(
                 return Ok(Some(result_message));
             }
             s => {
+                println!("status code: {:?}", s);
                 return Ok(None);
             }
         },
@@ -75,6 +76,7 @@ pub async fn subscribe_phone_number_async(
                 return Ok(Some(result_message));
             }
             s => {
+                println!("status code: {:?}", s);
                 return Ok(None);
             }
         },

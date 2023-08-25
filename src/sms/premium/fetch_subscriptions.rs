@@ -38,6 +38,7 @@ pub async fn fetch_sms_subscriptions_async(
                 return Ok(Some(result_message));
             }
             s => {
+                println!("status code: {:?}", s);
                 return Ok(None);
             }
         },

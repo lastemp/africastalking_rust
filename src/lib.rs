@@ -32,11 +32,12 @@ pub mod models {
 }
 
 use models::models::{
-    AirtimeInputRecipient, AirtimeMessage, DeleteSubscriptionMessage, FetchSmsMessage,
-    FetchSubscriptionsMessage, FindAirtimeMessage, FindMobileDataMessage, MobileDataMessage,
-    ResultAirtimeMessage, ResultFetchSmsMessages, ResultFetchTransactionAirtimeMessage,
-    ResultFetchTransactionMobileDataMessage, ResultMobileDataMessage,
-    ResultPremiumSmsDeleteSubscriptionMessage, ResultPremiumSmsFetchSubscriptionsMessage,
+    AirtimeInputRecipient, AirtimeMessage, CreateSubscriptionsMessage, DeleteSubscriptionMessage,
+    FetchSmsMessage, FetchSubscriptionsMessage, FindAirtimeMessage, FindMobileDataMessage,
+    MobileDataMessage, ResultAirtimeMessage, ResultFetchSmsMessages,
+    ResultFetchTransactionAirtimeMessage, ResultFetchTransactionMobileDataMessage,
+    ResultMobileDataMessage, ResultPremiumSmsDeleteSubscriptionMessage,
+    ResultPremiumSmsFetchSubscriptionsMessage, ResultPremiumSmsSubscriptionMessage,
     ResultSmsMessage, SmsMessage,
 };
 use util::util::parse_airtime_input_recipients;
@@ -47,6 +48,22 @@ use crate::{
 
 const SMS_URL_SANDBOX: &str = "https://api.sandbox.africastalking.com/version1/messaging";
 const SMS_URL_PROD: &str = "https://api.africastalking.com/version1/messaging";
+const CREATE_SUBSCRIPTION_TOKEN_SMS_URL_SANDBOX: &str =
+    "https://api.sandbox.africastalking.com/checkout/token/create";
+const CREATE_SUBSCRIPTION_TOKEN_SMS_URL_PROD: &str =
+    "https://api.africastalking.com/checkout/token/create";
+const CREATE_SUBSCRIPTION_SMS_URL_SANDBOX: &str =
+    "https://api.sandbox.africastalking.com/version1/subscription/create";
+const CREATE_SUBSCRIPTION_SMS_URL_PROD: &str =
+    "https://content.africastalking.com/version1/subscription/create";
+const FETCH_SUBSCRIPTION_SMS_URL_SANDBOX: &str =
+    "https://api.sandbox.africastalking.com/version1/subscription";
+const FETCH_SUBSCRIPTION_SMS_URL_PROD: &str =
+    "https://content.africastalking.com/version1/subscription";
+const DELETE_SUBSCRIPTION_SMS_URL_SANDBOX: &str =
+    "https://api.sandbox.africastalking.com/version1/subscription/delete";
+const DELETE_SUBSCRIPTION_SMS_URL_PROD: &str =
+    "https://content.africastalking.com/version1/subscription/delete";
 const DEFAULT_SENDER: &str = "AFRICASTKNG";
 const AIRTIME_URL_SANDBOX: &str = "https://api.sandbox.africastalking.com/version1/airtime/send";
 const AIRTIME_URL_PROD: &str = "https://api.africastalking.com/version1/airtime/send";
@@ -59,6 +76,10 @@ pub struct AfricasTalking {
     user_name: String,
     api_key: String,
     sms_url: String,
+    create_subscription_token_sms_url: String,
+    create_subscription_sms_url: String,
+    fetch_subscription_sms_url: String,
+    delete_subscription_sms_url: String,
     airtime_url: String,
     mobile_data_url: String,
     _env: String,
@@ -88,6 +109,26 @@ impl AfricasTalking {
             _ => SMS_URL_SANDBOX.to_string(),
         };
 
+        let create_subscription_token_sms_url: String = match _env {
+            "prod" => CREATE_SUBSCRIPTION_TOKEN_SMS_URL_PROD.to_string(),
+            _ => CREATE_SUBSCRIPTION_TOKEN_SMS_URL_SANDBOX.to_string(),
+        };
+
+        let create_subscription_sms_url: String = match _env {
+            "prod" => CREATE_SUBSCRIPTION_SMS_URL_PROD.to_string(),
+            _ => CREATE_SUBSCRIPTION_SMS_URL_SANDBOX.to_string(),
+        };
+
+        let fetch_subscription_sms_url: String = match _env {
+            "prod" => FETCH_SUBSCRIPTION_SMS_URL_PROD.to_string(),
+            _ => FETCH_SUBSCRIPTION_SMS_URL_SANDBOX.to_string(),
+        };
+
+        let delete_subscription_sms_url: String = match _env {
+            "prod" => DELETE_SUBSCRIPTION_SMS_URL_PROD.to_string(),
+            _ => DELETE_SUBSCRIPTION_SMS_URL_SANDBOX.to_string(),
+        };
+
         let airtime_url: String = match _env {
             "prod" => AIRTIME_URL_PROD.to_string(),
             _ => AIRTIME_URL_SANDBOX.to_string(),
@@ -104,6 +145,10 @@ impl AfricasTalking {
             user_name,
             api_key,
             sms_url,
+            create_subscription_token_sms_url,
+            create_subscription_sms_url,
+            fetch_subscription_sms_url,
+            delete_subscription_sms_url,
             airtime_url,
             mobile_data_url,
             _env,
@@ -229,25 +274,17 @@ impl AfricasTalking {
     }
 
     // Premium SMS
-    pub async fn fetch_sms_subscriptions_async(
+    pub async fn create_sms_subscriptions_async(
         &self,
-        fetch_subscriptions_message: FetchSubscriptionsMessage,
-    ) -> std::result::Result<Option<ResultPremiumSmsFetchSubscriptionsMessage>, reqwest::Error>
-    {
-        let short_code = fetch_subscriptions_message.get_short_code();
-        let _keyword = fetch_subscriptions_message.get_keyword();
-        let phone_number = fetch_subscriptions_message.get_phone_number();
-        let last_received_id = fetch_subscriptions_message.get_last_received_id();
+        subscriptions_message: CreateSubscriptionsMessage,
+    ) -> std::result::Result<Option<ResultPremiumSmsSubscriptionMessage>, reqwest::Error> {
+        let short_code = subscriptions_message.get_short_code();
+        let _keyword = subscriptions_message.get_keyword();
+        let phone_number = subscriptions_message.get_phone_number();
         let user_name = &self.user_name;
         let api_key = &self.api_key;
-        let api_url = &self.sms_url;
+        let api_url = &self.create_subscription_token_sms_url;
 
-        let last_received_id = match last_received_id {
-            Some(_x) => _x,
-            _ => 0,
-        };
-
-        //
         let _output = sms::premium::create_subscription::generate_checkout_token_async(
             phone_number.to_string(),
             user_name.to_string(),
@@ -256,9 +293,69 @@ impl AfricasTalking {
         );
 
         let _result = _output.await;
-        // unpack and get token
-        // then proceed with processing
-        //
+
+        let k = String::from(""); //Default value.
+
+        let (checkout_token, _description) = match _result {
+            Ok(_output) => {
+                let _x = if let Some(_x) = _output {
+                    let _token = _x.token.as_ref().unwrap_or(&k);
+                    let _description = _x.description.as_ref().unwrap_or(&k);
+                    (_token.to_string(), _description.to_string())
+                } else {
+                    (k, String::from(""))
+                };
+                _x
+            }
+            _ => (k, String::from("")),
+        };
+
+        println!("checkout_token: {:?}", &checkout_token);
+        println!("_description: {:?}", &_description);
+
+        // Proceed with processing if _description is Success
+        let is_successful = if _description
+            .to_lowercase()
+            .eq_ignore_ascii_case(&String::from("success"))
+        {
+            true
+        } else {
+            false
+        };
+
+        let api_url = &self.create_subscription_sms_url;
+        let _output = sms::premium::create_subscription::subscribe_phone_number_async(
+            short_code.to_string(),
+            _keyword.to_string(),
+            phone_number.to_string(),
+            checkout_token,
+            user_name.to_string(),
+            api_key.to_string(),
+            api_url.to_string(),
+        );
+
+        let _result = _output.await;
+
+        _result
+    }
+
+    // Premium SMS
+    pub async fn fetch_sms_subscriptions_async(
+        &self,
+        fetch_subscriptions_message: FetchSubscriptionsMessage,
+    ) -> std::result::Result<Option<ResultPremiumSmsFetchSubscriptionsMessage>, reqwest::Error>
+    {
+        let short_code = fetch_subscriptions_message.get_short_code();
+        let _keyword = fetch_subscriptions_message.get_keyword();
+        let last_received_id = fetch_subscriptions_message.get_last_received_id();
+        let user_name = &self.user_name;
+        let api_key = &self.api_key;
+        let api_url = &self.fetch_subscription_sms_url;
+
+        let last_received_id = match last_received_id {
+            Some(_x) => _x,
+            _ => 0,
+        };
 
         let _output = sms::premium::fetch_subscriptions::fetch_sms_subscriptions_async(
             short_code.to_string(),
@@ -285,7 +382,7 @@ impl AfricasTalking {
         let phone_number = delete_subscription_message.get_phone_number();
         let user_name = &self.user_name;
         let api_key = &self.api_key;
-        let api_url = &self.sms_url;
+        let api_url = &self.delete_subscription_sms_url;
 
         let _output = sms::premium::delete_subscription::delete_subscription_async(
             short_code.to_string(),
@@ -372,7 +469,7 @@ impl AfricasTalking {
     }
 
     // Mobile Data
-    pub async fn send_mobiledata_async(
+    pub async fn send_mobile_data_async(
         &self,
         mobile_data_message: MobileDataMessage,
     ) -> std::result::Result<Option<ResultMobileDataMessage>, reqwest::Error> {
