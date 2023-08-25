@@ -1,5 +1,5 @@
-use crate::models::ResultFetchTransactionAirtimeMessage;
-use crate::utils::build_headers;
+use crate::models::models::ResultFetchTransactionAirtimeMessage;
+use crate::util::util::build_headers;
 use reqwest::StatusCode;
 
 pub async fn find_airtime_transaction_status_async(

@@ -1,11 +1,11 @@
-use crate::models::ResultPremiumSmsFetchSubscriptionsMessage;
-use crate::utils::build_headers;
+use crate::models::models::ResultPremiumSmsFetchSubscriptionsMessage;
+use crate::util::util::build_headers;
 use reqwest::StatusCode;
 
 pub async fn fetch_sms_subscriptions_async(
     short_code: String,
     _keyword: String,
-    last_received_id: String,
+    last_received_id: u32,
     user_name: String,
     api_key: String,
     api_url: String,
@@ -14,7 +14,7 @@ pub async fn fetch_sms_subscriptions_async(
         ("username", user_name),
         ("shortCode", short_code),
         ("keyword", _keyword),
-        ("lastReceivedId", last_received_id),
+        ("lastReceivedId", last_received_id.to_string()),
     ];
 
     let client = reqwest::Client::new();

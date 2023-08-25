@@ -43,6 +43,87 @@ impl SmsMessage {
     }
 }
 
+pub struct FetchSmsMessage {
+    last_received_id: Option<u32>,
+}
+
+impl FetchSmsMessage {
+    pub fn new(last_received_id: Option<u32>) -> Result<Self, String> {
+        Ok(Self { last_received_id })
+    }
+    pub fn get_last_received_id(&self) -> Option<u32> {
+        let last_received_id = &self.last_received_id;
+        *last_received_id
+    }
+}
+
+pub struct FetchSubscriptionsMessage {
+    short_code: String,
+    _keyword: String,
+    phone_number: String,
+    last_received_id: Option<u32>,
+}
+
+impl FetchSubscriptionsMessage {
+    pub fn new(
+        short_code: String,
+        _keyword: String,
+        phone_number: String,
+        last_received_id: Option<u32>,
+    ) -> Result<Self, String> {
+        Ok(Self {
+            short_code,
+            _keyword,
+            phone_number,
+            last_received_id,
+        })
+    }
+    pub fn get_short_code(&self) -> &String {
+        let short_code = &self.short_code;
+        short_code
+    }
+    pub fn get_keyword(&self) -> &String {
+        let _keyword = &self._keyword;
+        _keyword
+    }
+    pub fn get_phone_number(&self) -> &String {
+        let phone_number = &self.phone_number;
+        phone_number
+    }
+    pub fn get_last_received_id(&self) -> Option<u32> {
+        let last_received_id = &self.last_received_id;
+        *last_received_id
+    }
+}
+
+pub struct DeleteSubscriptionMessage {
+    short_code: String,
+    _keyword: String,
+    phone_number: String,
+}
+
+impl DeleteSubscriptionMessage {
+    pub fn new(short_code: String, _keyword: String, phone_number: String) -> Result<Self, String> {
+        Ok(Self {
+            short_code,
+            _keyword,
+            phone_number,
+        })
+    }
+    pub fn get_short_code(&self) -> &String {
+        let short_code = &self.short_code;
+        short_code
+    }
+    pub fn get_keyword(&self) -> &String {
+        let _keyword = &self._keyword;
+        _keyword
+    }
+    pub fn get_phone_number(&self) -> &String {
+        let phone_number = &self.phone_number;
+        phone_number
+    }
+}
+
 #[derive(Deserialize, Debug)]
 #[allow(non_snake_case)]
 struct Recipients {
@@ -156,6 +237,20 @@ impl AirtimeMessage {
     pub fn get_recipients(&self) -> &Vec<AirtimeRecipient> {
         let _recipients = &self._recipients;
         _recipients
+    }
+}
+
+pub struct FindAirtimeMessage {
+    transaction_id: String,
+}
+
+impl FindAirtimeMessage {
+    pub fn new(transaction_id: String) -> Result<Self, String> {
+        Ok(Self { transaction_id })
+    }
+    pub fn get_transaction_id(&self) -> &String {
+        let transaction_id = &self.transaction_id;
+        transaction_id
     }
 }
 
@@ -299,6 +394,20 @@ impl MobileDataMessage {
     pub fn get_is_promo_bundle(&self) -> bool {
         let is_promo_bundle = &self.is_promo_bundle;
         *is_promo_bundle
+    }
+}
+
+pub struct FindMobileDataMessage {
+    transaction_id: String,
+}
+
+impl FindMobileDataMessage {
+    pub fn new(transaction_id: String) -> Result<Self, String> {
+        Ok(Self { transaction_id })
+    }
+    pub fn get_transaction_id(&self) -> &String {
+        let transaction_id = &self.transaction_id;
+        transaction_id
     }
 }
 

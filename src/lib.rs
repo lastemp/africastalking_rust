@@ -2,13 +2,24 @@ mod sms {
     pub mod bulk {
         pub mod send_sms;
     }
+    pub mod premium {
+        pub mod create_subscription;
+        pub mod delete_subscription;
+        pub mod fetch_subscriptions;
+        pub mod send_sms;
+    }
+    pub mod fetch_messages {
+        pub mod fetch_messages;
+    }
 }
 
 mod airtime {
+    pub mod find_transaction_status;
     pub mod send_airtime;
 }
 
 mod mobile_data {
+    pub mod find_transaction;
     pub mod send_mobile_data;
 }
 
@@ -21,8 +32,12 @@ pub mod models {
 }
 
 use models::models::{
-    AirtimeInputRecipient, AirtimeMessage, MobileDataMessage, ResultAirtimeMessage,
-    ResultMobileDataMessage, ResultSmsMessage, SmsMessage,
+    AirtimeInputRecipient, AirtimeMessage, DeleteSubscriptionMessage, FetchSmsMessage,
+    FetchSubscriptionsMessage, FindAirtimeMessage, FindMobileDataMessage, MobileDataMessage,
+    ResultAirtimeMessage, ResultFetchSmsMessages, ResultFetchTransactionAirtimeMessage,
+    ResultFetchTransactionMobileDataMessage, ResultMobileDataMessage,
+    ResultPremiumSmsDeleteSubscriptionMessage, ResultPremiumSmsFetchSubscriptionsMessage,
+    ResultSmsMessage, SmsMessage,
 };
 use util::util::parse_airtime_input_recipients;
 
@@ -155,6 +170,137 @@ impl AfricasTalking {
         _result
     }
 
+    // Premium SMS
+    pub async fn send_premium_message_async(
+        &self,
+        sms_message: SmsMessage,
+    ) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
+        let _message = sms_message.get_message();
+        let _to: String = sms_message.get_recipient();
+        let _from = sms_message.get_sender();
+        let user_name = &self.user_name;
+        let api_key = &self.api_key;
+        let api_url = &self.sms_url;
+
+        let _from = match _from {
+            Some(_x) => _x.to_string(),
+            _ => DEFAULT_SENDER.to_string(),
+        };
+
+        let _output = sms::premium::send_sms::send_message_async(
+            _message,
+            _to,
+            _from,
+            user_name.to_string(),
+            api_key.to_string(),
+            api_url.to_string(),
+        );
+
+        let _result = _output.await;
+
+        _result
+    }
+
+    // SMS
+    pub async fn fetch_sms_messages_async(
+        &self,
+        fetch_sms_message: FetchSmsMessage,
+    ) -> std::result::Result<Option<ResultFetchSmsMessages>, reqwest::Error> {
+        let last_received_id = fetch_sms_message.get_last_received_id();
+        let user_name = &self.user_name;
+        let api_key = &self.api_key;
+        let api_url = &self.sms_url;
+
+        let last_received_id = match last_received_id {
+            Some(_x) => _x,
+            _ => 0,
+        };
+
+        let _output = sms::fetch_messages::fetch_messages::fetch_sms_messages_async(
+            last_received_id,
+            user_name.to_string(),
+            api_key.to_string(),
+            api_url.to_string(),
+        );
+
+        let _result = _output.await;
+
+        _result
+    }
+
+    // Premium SMS
+    pub async fn fetch_sms_subscriptions_async(
+        &self,
+        fetch_subscriptions_message: FetchSubscriptionsMessage,
+    ) -> std::result::Result<Option<ResultPremiumSmsFetchSubscriptionsMessage>, reqwest::Error>
+    {
+        let short_code = fetch_subscriptions_message.get_short_code();
+        let _keyword = fetch_subscriptions_message.get_keyword();
+        let phone_number = fetch_subscriptions_message.get_phone_number();
+        let last_received_id = fetch_subscriptions_message.get_last_received_id();
+        let user_name = &self.user_name;
+        let api_key = &self.api_key;
+        let api_url = &self.sms_url;
+
+        let last_received_id = match last_received_id {
+            Some(_x) => _x,
+            _ => 0,
+        };
+
+        //
+        let _output = sms::premium::create_subscription::generate_checkout_token_async(
+            phone_number.to_string(),
+            user_name.to_string(),
+            api_key.to_string(),
+            api_url.to_string(),
+        );
+
+        let _result = _output.await;
+        // unpack and get token
+        // then proceed with processing
+        //
+
+        let _output = sms::premium::fetch_subscriptions::fetch_sms_subscriptions_async(
+            short_code.to_string(),
+            _keyword.to_string(),
+            last_received_id,
+            user_name.to_string(),
+            api_key.to_string(),
+            api_url.to_string(),
+        );
+
+        let _result = _output.await;
+
+        _result
+    }
+
+    // Premium SMS
+    pub async fn delete_subscription_async(
+        &self,
+        delete_subscription_message: DeleteSubscriptionMessage,
+    ) -> std::result::Result<Option<ResultPremiumSmsDeleteSubscriptionMessage>, reqwest::Error>
+    {
+        let short_code = delete_subscription_message.get_short_code();
+        let _keyword = delete_subscription_message.get_keyword();
+        let phone_number = delete_subscription_message.get_phone_number();
+        let user_name = &self.user_name;
+        let api_key = &self.api_key;
+        let api_url = &self.sms_url;
+
+        let _output = sms::premium::delete_subscription::delete_subscription_async(
+            short_code.to_string(),
+            _keyword.to_string(),
+            phone_number.to_string(),
+            user_name.to_string(),
+            api_key.to_string(),
+            api_url.to_string(),
+        );
+
+        let _result = _output.await;
+
+        _result
+    }
+
     // Airtime
     pub async fn send_airtime_async(
         &self,
@@ -193,6 +339,28 @@ impl AfricasTalking {
         let _output = airtime::send_airtime::send_airtime_async(
             max_num_retry,
             _recipients,
+            user_name.to_string(),
+            api_key.to_string(),
+            api_url.to_string(),
+        );
+
+        let _result = _output.await;
+
+        _result
+    }
+
+    // Airtime
+    pub async fn find_airtime_transaction_status_async(
+        &self,
+        find_airtime_message: FindAirtimeMessage,
+    ) -> std::result::Result<Option<ResultFetchTransactionAirtimeMessage>, reqwest::Error> {
+        let transaction_id = find_airtime_message.get_transaction_id();
+        let user_name = &self.user_name;
+        let api_key = &self.api_key;
+        let api_url = &self.sms_url;
+
+        let _output = airtime::find_transaction_status::find_airtime_transaction_status_async(
+            transaction_id.to_string(),
             user_name.to_string(),
             api_key.to_string(),
             api_url.to_string(),
@@ -242,6 +410,28 @@ impl AfricasTalking {
             _unit,
             _validity,
             is_promo_bundle,
+            user_name.to_string(),
+            api_key.to_string(),
+            api_url.to_string(),
+        );
+
+        let _result = _output.await;
+
+        _result
+    }
+
+    // Mobile Data
+    pub async fn find_mobile_data_transaction_async(
+        &self,
+        find_mobile_data_message: FindMobileDataMessage,
+    ) -> std::result::Result<Option<ResultFetchTransactionMobileDataMessage>, reqwest::Error> {
+        let transaction_id = find_mobile_data_message.get_transaction_id();
+        let user_name = &self.user_name;
+        let api_key = &self.api_key;
+        let api_url = &self.sms_url;
+
+        let _output = mobile_data::find_transaction::find_mobile_data_transaction_async(
+            transaction_id.to_string(),
             user_name.to_string(),
             api_key.to_string(),
             api_url.to_string(),

@@ -1,5 +1,5 @@
-use crate::models::ResultPremiumSmsSubscriptionMessage;
-use crate::utils::build_headers;
+use crate::models::models::ResultPremiumSmsSubscriptionMessage;
+use crate::util::util::{build_headers, build_headers_non_api_key};
 use reqwest::StatusCode;
 
 pub async fn generate_checkout_token_async(

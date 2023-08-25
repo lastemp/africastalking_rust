@@ -1,5 +1,5 @@
-use crate::models::ResultSmsMessage;
-use crate::utils::build_headers;
+use crate::models::models::ResultSmsMessage;
+use crate::util::util::build_headers;
 use reqwest::StatusCode;
 
 pub async fn send_message_async(

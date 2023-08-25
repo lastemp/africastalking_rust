@@ -1,5 +1,5 @@
-use crate::models::ResultFetchTransactionMobileDataMessage;
-use crate::utils::build_headers;
+use crate::models::models::ResultFetchTransactionMobileDataMessage;
+use crate::util::util::build_headers;
 use reqwest::StatusCode;
 
 pub async fn find_mobile_data_transaction_async(

@@ -1,5 +1,5 @@
-use crate::models::ResultPremiumSmsDeleteSubscriptionMessage;
-use crate::utils::build_headers;
+use crate::models::models::ResultPremiumSmsDeleteSubscriptionMessage;
+use crate::util::util::build_headers;
 use reqwest::StatusCode;
 
 pub async fn delete_subscription_async(
