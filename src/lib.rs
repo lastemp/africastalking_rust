@@ -32,13 +32,13 @@ pub mod models {
 }
 
 use models::models::{
-    AirtimeInputRecipient, AirtimeMessage, CreateSubscriptionsMessage, DeleteSubscriptionMessage,
-    FetchSmsMessage, FetchSubscriptionsMessage, FindAirtimeMessage, FindMobileDataMessage,
-    MobileDataMessage, ResultAirtimeMessage, ResultFetchSmsMessages,
-    ResultFetchTransactionAirtimeMessage, ResultFetchTransactionMobileDataMessage,
-    ResultMobileDataMessage, ResultPremiumSmsDeleteSubscriptionMessage,
-    ResultPremiumSmsFetchSubscriptionsMessage, ResultPremiumSmsSubscriptionMessage,
-    ResultSmsMessage, SmsMessage,
+    AirtimeInputRecipient, AirtimeMessage, BulkSmsMessage, CreateSubscriptionsMessage,
+    DeleteSubscriptionMessage, FetchSmsMessage, FetchSubscriptionsMessage, FindAirtimeMessage,
+    FindMobileDataMessage, MobileDataMessage, PremiumSmsMessage, ResultAirtimeMessage,
+    ResultFetchSmsMessages, ResultFetchTransactionAirtimeMessage,
+    ResultFetchTransactionMobileDataMessage, ResultMobileDataMessage,
+    ResultPremiumSmsDeleteSubscriptionMessage, ResultPremiumSmsFetchSubscriptionsMessage,
+    ResultPremiumSmsSubscriptionMessage, ResultSmsMessage,
 };
 use util::util::parse_airtime_input_recipients;
 
@@ -95,10 +95,7 @@ impl AfricasTalking {
             return Err(String::from("api key is empty"));
         }
 
-        let _env = if user_name
-            .to_lowercase()
-            .eq_ignore_ascii_case(&String::from("sandbox"))
-        {
+        let _env = if user_name.eq_ignore_ascii_case(&String::from("sandbox")) {
             "sandbox"
         } else {
             "prod"
@@ -158,24 +155,27 @@ impl AfricasTalking {
     // SMS
     pub async fn send_bulk_message_async(
         &self,
-        sms_message: SmsMessage,
+        sms_message: BulkSmsMessage,
     ) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
         let _message = sms_message.get_message();
         let _to: String = sms_message.get_recipient();
         let _from = sms_message.get_sender();
+        let _enqueue = sms_message.get_enqueue();
         let user_name = &self.user_name;
         let api_key = &self.api_key;
         let api_url = &self.sms_url;
-
+        /*/
         let _from = match _from {
             Some(_x) => _x.to_string(),
             _ => DEFAULT_SENDER.to_string(),
         };
+        */
 
         let _output = sms::bulk::send_sms::send_message_async(
             _message,
             _to,
             _from,
+            _enqueue,
             user_name.to_string(),
             api_key.to_string(),
             api_url.to_string(),
@@ -189,24 +189,26 @@ impl AfricasTalking {
     // SMS
     pub fn send_bulk_message(
         &self,
-        sms_message: SmsMessage,
+        sms_message: BulkSmsMessage,
     ) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
         let _message = sms_message.get_message();
         let _to: String = sms_message.get_recipient();
         let _from = sms_message.get_sender();
+        let _enqueue = sms_message.get_enqueue();
         let user_name = &self.user_name;
         let api_key = &self.api_key;
         let api_url = &self.sms_url;
-
+        /*
         let _from = match _from {
             Some(_x) => _x.to_string(),
             _ => DEFAULT_SENDER.to_string(),
         };
-
+        */
         let _result = sms::bulk::send_sms::send_message(
             _message,
             _to,
             _from,
+            _enqueue,
             user_name.to_string(),
             api_key.to_string(),
             api_url.to_string(),
@@ -218,24 +220,29 @@ impl AfricasTalking {
     // Premium SMS
     pub async fn send_premium_message_async(
         &self,
-        sms_message: SmsMessage,
+        sms_message: PremiumSmsMessage,
     ) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
         let _message = sms_message.get_message();
         let _to: String = sms_message.get_recipient();
         let _from = sms_message.get_sender();
+        let _keyword = sms_message.get_keyword();
+        let _enqueue = sms_message.get_enqueue();
+        let link_id = sms_message.get_link_id();
+        let retry_duration_in_hours = sms_message.get_retry_duration_in_hours();
+        let request_id = sms_message.get_request_id();
         let user_name = &self.user_name;
         let api_key = &self.api_key;
         let api_url = &self.sms_url;
-
-        let _from = match _from {
-            Some(_x) => _x.to_string(),
-            _ => DEFAULT_SENDER.to_string(),
-        };
 
         let _output = sms::premium::send_sms::send_message_async(
             _message,
             _to,
             _from,
+            _keyword,
+            _enqueue,
+            link_id,
+            retry_duration_in_hours,
+            request_id,
             user_name.to_string(),
             api_key.to_string(),
             api_url.to_string(),
@@ -314,10 +321,7 @@ impl AfricasTalking {
         println!("_description: {:?}", &_description);
 
         // Proceed with processing if _description is Success
-        let is_successful = if _description
-            .to_lowercase()
-            .eq_ignore_ascii_case(&String::from("success"))
-        {
+        let is_successful = if _description.eq_ignore_ascii_case(&String::from("success")) {
             true
         } else {
             false

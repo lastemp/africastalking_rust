@@ -1,6 +1,6 @@
 use africastalking_rust::models::models::{
-    CreateSubscriptionsMessage, DeleteSubscriptionMessage, FetchSmsMessage,
-    FetchSubscriptionsMessage, SmsMessage,
+    BulkSmsMessage, CreateSubscriptionsMessage, DeleteSubscriptionMessage, FetchSmsMessage,
+    FetchSubscriptionsMessage, PremiumSmsMessage,
 };
 use africastalking_rust::AfricasTalking;
 
@@ -15,8 +15,9 @@ pub async fn test_send_bulk_message_async(
         let _message = String::from("Have a wonderful time!");
         let _to = phone_number;
         let _from = None;
+        let _enqueue = None;
 
-        let _result = SmsMessage::new(_message, _to, _from);
+        let _result = BulkSmsMessage::new(_message, _to, _from, _enqueue);
         if let Ok(sms_message) = _result {
             let _output = africas_talking.send_bulk_message_async(sms_message);
             let _result = _output.await;
@@ -53,8 +54,9 @@ pub fn test_send_bulk_message(user_name: String, api_key: String, phone_number: 
         let _message = String::from("Have a blessed time!");
         let _to = phone_number;
         let _from = None;
+        let _enqueue = None;
 
-        let _result = SmsMessage::new(_message, _to, _from);
+        let _result = BulkSmsMessage::new(_message, _to, _from, _enqueue);
         if let Ok(sms_message) = _result {
             let _result = africas_talking.send_bulk_message(sms_message);
             if let Ok(result_message) = _result {
@@ -93,9 +95,23 @@ pub async fn test_send_premium_message_async(
     if let Ok(africas_talking) = _result {
         let _message = String::from("Have a wonderful time!");
         let _to = phone_number;
-        let _from = None;
+        let _from = String::from("kka7");
+        let _keyword = None;
+        let _enqueue = None;
+        let link_id = None;
+        let retry_duration_in_hours = None;
+        let request_id = None;
 
-        let _result = SmsMessage::new(_message, _to, _from);
+        let _result = PremiumSmsMessage::new(
+            _message,
+            _to,
+            _from,
+            _keyword,
+            _enqueue,
+            link_id,
+            retry_duration_in_hours,
+            request_id,
+        );
         if let Ok(sms_message) = _result {
             let _output = africas_talking.send_premium_message_async(sms_message);
             let _result = _output.await;

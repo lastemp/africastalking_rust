@@ -1,14 +1,20 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
-pub struct SmsMessage {
+pub struct BulkSmsMessage {
     _message: String,
     _to: String,
     _from: Option<String>,
+    _enqueue: Option<bool>,
 }
 
-impl SmsMessage {
-    pub fn new(_message: String, _to: String, _from: Option<String>) -> Result<Self, String> {
+impl BulkSmsMessage {
+    pub fn new(
+        _message: String,
+        _to: String,
+        _from: Option<String>,
+        _enqueue: Option<bool>,
+    ) -> Result<Self, String> {
         if _message.is_empty() || _message.replace(" ", "").trim().len() == 0 {
             return Err(String::from("message is empty"));
         }
@@ -27,6 +33,7 @@ impl SmsMessage {
             _message,
             _to,
             _from,
+            _enqueue,
         })
     }
     pub fn get_message(&self) -> String {
@@ -40,6 +47,113 @@ impl SmsMessage {
     pub fn get_sender(&self) -> &Option<String> {
         let _from = &self._from;
         _from
+    }
+    pub fn get_enqueue(&self) -> &Option<bool> {
+        let _enqueue = &self._enqueue;
+        _enqueue
+    }
+}
+
+pub struct PremiumSmsMessage {
+    _message: String,
+    _to: String,
+    _from: String,
+    _keyword: Option<String>,
+    _enqueue: Option<bool>,
+    link_id: Option<String>,
+    retry_duration_in_hours: Option<u8>,
+    request_id: Option<String>,
+}
+
+impl PremiumSmsMessage {
+    pub fn new(
+        _message: String,
+        _to: String,
+        _from: String,
+        _keyword: Option<String>,
+        _enqueue: Option<bool>,
+        link_id: Option<String>,
+        retry_duration_in_hours: Option<u8>,
+        request_id: Option<String>,
+    ) -> Result<Self, String> {
+        if _message.is_empty() || _message.replace(" ", "").trim().len() == 0 {
+            return Err(String::from("message is empty"));
+        }
+
+        if _to.is_empty() || _to.replace(" ", "").trim().len() == 0 {
+            return Err(String::from("message recipient is empty"));
+        }
+
+        if _from.is_empty() || _from.replace(" ", "").trim().len() == 0 {
+            return Err(String::from("message sender is empty"));
+        }
+
+        if let Some(_keyword) = &_keyword {
+            if _keyword.is_empty() || _keyword.replace(" ", "").trim().len() == 0 {
+                return Err(String::from("keyword is empty"));
+            }
+        }
+
+        if let Some(link_id) = &link_id {
+            if link_id.is_empty() || link_id.replace(" ", "").trim().len() == 0 {
+                return Err(String::from("link id is empty"));
+            }
+        }
+
+        if let Some(retry_duration_in_hours) = &retry_duration_in_hours {
+            if *retry_duration_in_hours == 0 {
+                return Err(String::from("Invalid retry_duration_in_hours"));
+            }
+        }
+
+        if let Some(request_id) = &request_id {
+            if request_id.is_empty() || request_id.replace(" ", "").trim().len() == 0 {
+                return Err(String::from("request id is empty"));
+            }
+        }
+
+        Ok(Self {
+            _message,
+            _to,
+            _from,
+            _keyword,
+            _enqueue,
+            link_id,
+            retry_duration_in_hours,
+            request_id,
+        })
+    }
+    pub fn get_message(&self) -> String {
+        let _message = &self._message;
+        _message.to_string()
+    }
+    pub fn get_recipient(&self) -> String {
+        let _to = &self._to;
+        _to.to_string()
+    }
+    pub fn get_sender(&self) -> String {
+        let _from = &self._from;
+        _from.to_string()
+    }
+    pub fn get_keyword(&self) -> &Option<String> {
+        let _keyword = &self._keyword;
+        _keyword
+    }
+    pub fn get_enqueue(&self) -> &Option<bool> {
+        let _enqueue = &self._enqueue;
+        _enqueue
+    }
+    pub fn get_link_id(&self) -> &Option<String> {
+        let link_id = &self.link_id;
+        link_id
+    }
+    pub fn get_retry_duration_in_hours(&self) -> &Option<u8> {
+        let retry_duration_in_hours = &self.retry_duration_in_hours;
+        retry_duration_in_hours
+    }
+    pub fn get_request_id(&self) -> &Option<String> {
+        let request_id = &self.request_id;
+        request_id
     }
 }
 
@@ -379,8 +493,25 @@ impl MobileDataMessage {
             return Err(String::from("unit is empty"));
         }
 
+        if _unit.eq_ignore_ascii_case(&String::from("MB"))
+            || _unit.eq_ignore_ascii_case(&String::from("GB"))
+        { // valid
+        } else {
+            return Err(String::from("Invalid unit"));
+        }
+
         if _validity.is_empty() || _validity.replace(" ", "").trim().len() == 0 {
             return Err(String::from("validity is empty"));
+        }
+
+        if _validity.eq_ignore_ascii_case(&String::from("Day"))
+            || _unit.eq_ignore_ascii_case(&String::from("Week"))
+            || _unit.eq_ignore_ascii_case(&String::from("BiWeek"))
+            || _unit.eq_ignore_ascii_case(&String::from("Month"))
+            || _unit.eq_ignore_ascii_case(&String::from("Quarterly"))
+        { // valid
+        } else {
+            return Err(String::from("Incorrect validity"));
         }
 
         Ok(Self {

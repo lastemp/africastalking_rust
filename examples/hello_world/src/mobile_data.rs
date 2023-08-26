@@ -1,20 +1,12 @@
-use africastalking_rust::models::models::{MobileDataMessage, MobileDataRecipient};
+use africastalking_rust::models::models::{
+    FindMobileDataMessage, MobileDataMessage, MobileDataRecipient,
+};
 use africastalking_rust::AfricasTalking;
 
 pub async fn test_send_mobile_data_async(user_name: String, api_key: String, phone_number: String) {
-    /*
-    let user_name = USERNAME_SANDBOX.to_string();
-    let api_key = API_KEY_SANDBOX.to_string();
-
-    let user_name = USERNAME_PROD.to_string();
-    let api_key = API_KEY_PROD.to_string();
-    */
-
     let _result = AfricasTalking::new(user_name, api_key);
 
     if let Ok(africas_talking) = _result {
-        //let phone_number = PHONE_NO.to_string();
-
         let _result = MobileDataRecipient::new(phone_number);
         if let Ok(mobile_data_recipient) = _result {
             let product_name = String::from("test");
@@ -38,8 +30,8 @@ pub async fn test_send_mobile_data_async(user_name: String, api_key: String, pho
                 let _result = _output.await;
                 if let Ok(result_message) = _result {
                     println!("result_message: {:?}", result_message);
-                    if let Some(result_sms) = result_message {
-                        println!("result_sms: {:?}", result_sms);
+                    if let Some(result_mobile_data) = result_message {
+                        println!("result_mobile_data: {:?}", result_mobile_data);
                     } else if let None = result_message {
                         println!("None");
                     } else {
@@ -47,6 +39,46 @@ pub async fn test_send_mobile_data_async(user_name: String, api_key: String, pho
                     }
                 } else if let Err(e) = _result {
                     println!("{:?}", e);
+                } else {
+                    println!("Unexpected error occured during processing");
+                }
+            } else if let Err(e) = _result {
+                println!("{:?}", e);
+            } else {
+                println!("Unexpected error occured during processing");
+            }
+        } else if let Err(e) = _result {
+            println!("{:?}", e);
+        } else {
+            println!("Unexpected error occured during processing");
+        }
+    } else if let Err(e) = _result {
+        println!("{:?}", e);
+    } else {
+        println!("Unexpected error occured during processing");
+    }
+}
+
+pub async fn test_find_mobile_data_transaction_async(
+    user_name: String,
+    api_key: String,
+    phone_number: String,
+) {
+    let _result = AfricasTalking::new(user_name, api_key);
+
+    if let Ok(africas_talking) = _result {
+        let transaction_id = String::from("18hga5hjam");
+
+        let _result = FindMobileDataMessage::new(transaction_id);
+        if let Ok(mobile_data_message) = _result {
+            let _output = africas_talking.find_mobile_data_transaction_async(mobile_data_message);
+            let _result = _output.await;
+            if let Ok(result_message) = _result {
+                println!("result_message: {:?}", result_message);
+                if let Some(result_mobile_data) = result_message {
+                    println!("result_mobile_data: {:?}", result_mobile_data);
+                } else if let None = result_message {
+                    println!("None");
                 } else {
                     println!("Unexpected error occured during processing");
                 }
