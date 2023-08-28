@@ -2,10 +2,10 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct BulkSmsMessage {
-    _message: String,
-    _to: String,
-    _from: Option<String>,
-    _enqueue: Option<bool>,
+    _message: String,       // The message to be sent.
+    _to: String,            // A comma separated string of recipients’ phone numbers.
+    _from: Option<String>,  // Your registered short code or alphanumeric, defaults to AFRICASTKNG.
+    _enqueue: Option<bool>, // If enabled, the API will store the messages in a queue and send them out asynchronously.
 }
 
 impl BulkSmsMessage {
@@ -55,14 +55,14 @@ impl BulkSmsMessage {
 }
 
 pub struct PremiumSmsMessage {
-    _message: String,
-    _to: String,
-    _from: String,
-    _keyword: Option<String>,
-    _enqueue: Option<bool>,
-    link_id: Option<String>,
-    retry_duration_in_hours: Option<u8>,
-    request_id: Option<String>,
+    _message: String,                    // The message to be sent.
+    _to: String,                         // A comma separated string of recipients’ phone numbers.
+    _from: String, // Your registered short code or alphanumeric, defaults to AFRICASTKNG.
+    _keyword: Option<String>, // The keyword to be used for a premium service.
+    _enqueue: Option<bool>, // If enabled, the API will store the messages in a queue and send them out asynchronously.
+    link_id: Option<String>, // This is used for premium services to send OnDemand messages.
+    retry_duration_in_hours: Option<u8>, // This specifies the number of hours your subscription message should be retried.
+    request_id: Option<String>,          // This is a client specified request identifier.
 }
 
 impl PremiumSmsMessage {

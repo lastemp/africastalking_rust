@@ -30,6 +30,7 @@ pub async fn test_send_mobile_data_async(user_name: String, api_key: String, pho
                 let _result = _output.await;
                 if let Ok(result_message) = _result {
                     println!("result_message: {:?}", result_message);
+                    /*
                     if let Some(result_mobile_data) = result_message {
                         println!("result_mobile_data: {:?}", result_mobile_data);
                     } else if let None = result_message {
@@ -37,6 +38,7 @@ pub async fn test_send_mobile_data_async(user_name: String, api_key: String, pho
                     } else {
                         println!("Unexpected error occured during processing");
                     }
+                    */
                 } else if let Err(e) = _result {
                     println!("{:?}", e);
                 } else {
@@ -75,6 +77,7 @@ pub async fn test_find_mobile_data_transaction_async(
             let _result = _output.await;
             if let Ok(result_message) = _result {
                 println!("result_message: {:?}", result_message);
+                /*
                 if let Some(result_mobile_data) = result_message {
                     println!("result_mobile_data: {:?}", result_mobile_data);
                 } else if let None = result_message {
@@ -82,6 +85,7 @@ pub async fn test_find_mobile_data_transaction_async(
                 } else {
                     println!("Unexpected error occured during processing");
                 }
+                */
             } else if let Err(e) = _result {
                 println!("{:?}", e);
             } else {

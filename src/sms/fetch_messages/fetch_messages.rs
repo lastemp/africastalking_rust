@@ -7,7 +7,8 @@ pub async fn fetch_sms_messages_async(
     user_name: String,
     api_key: String,
     api_url: String,
-) -> std::result::Result<Option<ResultFetchSmsMessages>, reqwest::Error> {
+) -> std::result::Result<ResultFetchSmsMessages, String> {
+    // std::result::Result<Option<ResultFetchSmsMessages>, reqwest::Error>
     let params = [
         ("username", user_name),
         ("lastReceivedId", last_received_id.to_string()),
@@ -23,17 +24,29 @@ pub async fn fetch_sms_messages_async(
 
     match res {
         Err(e) => {
-            return Err(e);
+            return Err(e.to_string());
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
-                let result_message = response.json::<ResultFetchSmsMessages>().await?;
-
-                return Ok(Some(result_message));
+                //let result_message = response.json::<ResultFetchSmsMessages>().await?;
+                //return Ok(Some(result_message));
+                match response.json::<ResultFetchSmsMessages>().await {
+                    Ok(result_message) => {
+                        // Handle success case
+                        return Ok(result_message);
+                    }
+                    Err(_err) => {
+                        // Handle error case
+                        return Err(_err.to_string());
+                    }
+                }
             }
             s => {
-                println!("status code: {:?}", s);
-                return Ok(None);
+                //println!("status code: {:?}", s);
+                //return Ok(None);
+                let mut _x = String::from("Request failed processing, status code: ");
+                _x.push_str(&s.to_string());
+                return Err(_x.to_string());
             }
         },
     };

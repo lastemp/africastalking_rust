@@ -20,6 +20,7 @@ pub async fn test_send_airtime_async(user_name: String, api_key: String, phone_n
                 let _result = _output.await;
                 if let Ok(result_message) = _result {
                     println!("result_message: {:?}", result_message);
+                    /*
                     if let Some(result_airtime) = result_message {
                         println!("result_airtime: {:?}", result_airtime);
                     } else if let None = result_message {
@@ -27,6 +28,7 @@ pub async fn test_send_airtime_async(user_name: String, api_key: String, phone_n
                     } else {
                         println!("Unexpected error occured during processing");
                     }
+                    */
                 } else if let Err(e) = _result {
                     println!("{:?}", e);
                 } else {
@@ -65,6 +67,7 @@ pub async fn test_find_airtime_transaction_status_async(
             let _result = _output.await;
             if let Ok(result_message) = _result {
                 println!("result_message: {:?}", result_message);
+                /*
                 if let Some(result_airtime) = result_message {
                     println!("result_airtime: {:?}", result_airtime);
                 } else if let None = result_message {
@@ -72,6 +75,7 @@ pub async fn test_find_airtime_transaction_status_async(
                 } else {
                     println!("Unexpected error occured during processing");
                 }
+                */
             } else if let Err(e) = _result {
                 println!("{:?}", e);
             } else {

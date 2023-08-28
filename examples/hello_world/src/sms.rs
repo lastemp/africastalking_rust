@@ -18,6 +18,7 @@ pub async fn test_send_bulk_message_async(
         let _enqueue = None;
 
         let _result = BulkSmsMessage::new(_message, _to, _from, _enqueue);
+        /*
         if let Ok(sms_message) = _result {
             let _output = africas_talking.send_bulk_message_async(sms_message);
             let _result = _output.await;
@@ -30,6 +31,31 @@ pub async fn test_send_bulk_message_async(
                 } else {
                     println!("Unexpected error occured during processing");
                 }
+            } else if let Err(e) = _result {
+                println!("{:?}", e);
+            } else {
+                println!("Unexpected error occured during processing");
+            }
+        } else if let Err(e) = _result {
+            println!("{:?}", e);
+        } else {
+            println!("Unexpected error occured during processing");
+        }
+        */
+        if let Ok(sms_message) = _result {
+            let _output = africas_talking.send_bulk_message_async(sms_message);
+            let _result = _output.await;
+            if let Ok(result_message) = _result {
+                println!("result_message: {:?}", result_message);
+                /*
+                if let Some(result_sms) = result_message {
+                    println!("result_sms: {:?}", result_sms);
+                } else if let None = result_message {
+                    println!("None");
+                } else {
+                    println!("Unexpected error occured during processing");
+                }
+                */
             } else if let Err(e) = _result {
                 println!("{:?}", e);
             } else {
@@ -117,6 +143,7 @@ pub async fn test_send_premium_message_async(
             let _result = _output.await;
             if let Ok(result_message) = _result {
                 println!("result_message: {:?}", result_message);
+                /*
                 if let Some(result_sms) = result_message {
                     println!("result_sms: {:?}", result_sms);
                 } else if let None = result_message {
@@ -124,6 +151,7 @@ pub async fn test_send_premium_message_async(
                 } else {
                     println!("Unexpected error occured during processing");
                 }
+                */
             } else if let Err(e) = _result {
                 println!("{:?}", e);
             } else {
@@ -157,6 +185,7 @@ pub async fn test_fetch_sms_messages_async(
             let _result = _output.await;
             if let Ok(result_message) = _result {
                 println!("result_message: {:?}", result_message);
+                /*
                 if let Some(result_sms) = result_message {
                     println!("result_sms: {:?}", result_sms);
                 } else if let None = result_message {
@@ -164,6 +193,7 @@ pub async fn test_fetch_sms_messages_async(
                 } else {
                     println!("Unexpected error occured during processing");
                 }
+                */
             } else if let Err(e) = _result {
                 println!("{:?}", e);
             } else {
@@ -198,6 +228,7 @@ pub async fn test_create_sms_subscriptions_async(
             let _result = _output.await;
             if let Ok(result_message) = _result {
                 println!("result_message: {:?}", result_message);
+                /*
                 if let Some(result_sms) = result_message {
                     println!("result_sms: {:?}", result_sms);
                 } else if let None = result_message {
@@ -205,6 +236,7 @@ pub async fn test_create_sms_subscriptions_async(
                 } else {
                     println!("Unexpected error occured during processing");
                 }
+                */
             } else if let Err(e) = _result {
                 println!("{:?}", e);
             } else {
@@ -240,6 +272,7 @@ pub async fn test_fetch_sms_subscriptions_async(
             let _result = _output.await;
             if let Ok(result_message) = _result {
                 println!("result_message: {:?}", result_message);
+                /*
                 if let Some(result_sms) = result_message {
                     println!("result_sms: {:?}", result_sms);
                 } else if let None = result_message {
@@ -247,6 +280,7 @@ pub async fn test_fetch_sms_subscriptions_async(
                 } else {
                     println!("Unexpected error occured during processing");
                 }
+                */
             } else if let Err(e) = _result {
                 println!("{:?}", e);
             } else {
@@ -281,6 +315,7 @@ pub async fn test_delete_subscription_async(
             let _result = _output.await;
             if let Ok(result_message) = _result {
                 println!("result_message: {:?}", result_message);
+                /*
                 if let Some(result_sms) = result_message {
                     println!("result_sms: {:?}", result_sms);
                 } else if let None = result_message {
@@ -288,6 +323,7 @@ pub async fn test_delete_subscription_async(
                 } else {
                     println!("Unexpected error occured during processing");
                 }
+                */
             } else if let Err(e) = _result {
                 println!("{:?}", e);
             } else {

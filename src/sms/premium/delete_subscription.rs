@@ -9,7 +9,7 @@ pub async fn delete_subscription_async(
     user_name: String,
     api_key: String,
     api_url: String,
-) -> std::result::Result<Option<ResultPremiumSmsDeleteSubscriptionMessage>, reqwest::Error> {
+) -> std::result::Result<ResultPremiumSmsDeleteSubscriptionMessage, String> {
     let params = [
         ("username", user_name),
         ("shortCode", short_code),
@@ -27,19 +27,37 @@ pub async fn delete_subscription_async(
 
     match res {
         Err(e) => {
-            return Err(e);
+            return Err(e.to_string());
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
+                /*
                 let result_message = response
                     .json::<ResultPremiumSmsDeleteSubscriptionMessage>()
                     .await?;
 
                 return Ok(Some(result_message));
+                */
+                match response
+                    .json::<ResultPremiumSmsDeleteSubscriptionMessage>()
+                    .await
+                {
+                    Ok(result_message) => {
+                        // Handle success case
+                        return Ok(result_message);
+                    }
+                    Err(_err) => {
+                        // Handle error case
+                        return Err(_err.to_string());
+                    }
+                }
             }
             s => {
-                println!("status code: {:?}", s);
-                return Ok(None);
+                //println!("status code: {:?}", s);
+                //return Ok(None);
+                let mut _x = String::from("Request failed processing, status code: ");
+                _x.push_str(&s.to_string());
+                return Err(_x.to_string());
             }
         },
     };

@@ -156,7 +156,8 @@ impl AfricasTalking {
     pub async fn send_bulk_message_async(
         &self,
         sms_message: BulkSmsMessage,
-    ) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
+    ) -> std::result::Result<ResultSmsMessage, String> {
+        // std::result::Result<Option<ResultSmsMessage>, String>
         let _message = sms_message.get_message();
         let _to: String = sms_message.get_recipient();
         let _from = sms_message.get_sender();
@@ -164,12 +165,6 @@ impl AfricasTalking {
         let user_name = &self.user_name;
         let api_key = &self.api_key;
         let api_url = &self.sms_url;
-        /*/
-        let _from = match _from {
-            Some(_x) => _x.to_string(),
-            _ => DEFAULT_SENDER.to_string(),
-        };
-        */
 
         let _output = sms::bulk::send_sms::send_message_async(
             _message,
@@ -198,12 +193,7 @@ impl AfricasTalking {
         let user_name = &self.user_name;
         let api_key = &self.api_key;
         let api_url = &self.sms_url;
-        /*
-        let _from = match _from {
-            Some(_x) => _x.to_string(),
-            _ => DEFAULT_SENDER.to_string(),
-        };
-        */
+
         let _result = sms::bulk::send_sms::send_message(
             _message,
             _to,
@@ -221,7 +211,8 @@ impl AfricasTalking {
     pub async fn send_premium_message_async(
         &self,
         sms_message: PremiumSmsMessage,
-    ) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
+    ) -> std::result::Result<ResultSmsMessage, String> {
+        // std::result::Result<Option<ResultSmsMessage>, reqwest::Error>
         let _message = sms_message.get_message();
         let _to: String = sms_message.get_recipient();
         let _from = sms_message.get_sender();
@@ -257,7 +248,7 @@ impl AfricasTalking {
     pub async fn fetch_sms_messages_async(
         &self,
         fetch_sms_message: FetchSmsMessage,
-    ) -> std::result::Result<Option<ResultFetchSmsMessages>, reqwest::Error> {
+    ) -> std::result::Result<ResultFetchSmsMessages, String> {
         let last_received_id = fetch_sms_message.get_last_received_id();
         let user_name = &self.user_name;
         let api_key = &self.api_key;
@@ -284,7 +275,7 @@ impl AfricasTalking {
     pub async fn create_sms_subscriptions_async(
         &self,
         subscriptions_message: CreateSubscriptionsMessage,
-    ) -> std::result::Result<Option<ResultPremiumSmsSubscriptionMessage>, reqwest::Error> {
+    ) -> std::result::Result<ResultPremiumSmsSubscriptionMessage, String> {
         let short_code = subscriptions_message.get_short_code();
         let _keyword = subscriptions_message.get_keyword();
         let phone_number = subscriptions_message.get_phone_number();
@@ -305,6 +296,7 @@ impl AfricasTalking {
 
         let (checkout_token, _description) = match _result {
             Ok(_output) => {
+                /*
                 let _x = if let Some(_x) = _output {
                     let _token = _x.token.as_ref().unwrap_or(&k);
                     let _description = _x.description.as_ref().unwrap_or(&k);
@@ -313,6 +305,10 @@ impl AfricasTalking {
                     (k, String::from(""))
                 };
                 _x
+                */
+                let _token = _output.token.as_ref().unwrap_or(&k);
+                let _description = _output.description.as_ref().unwrap_or(&k);
+                (_token.to_string(), _description.to_string())
             }
             _ => (k, String::from("")),
         };
@@ -321,10 +317,9 @@ impl AfricasTalking {
         println!("_description: {:?}", &_description);
 
         // Proceed with processing if _description is Success
-        let is_successful = if _description.eq_ignore_ascii_case(&String::from("success")) {
-            true
-        } else {
-            false
+        if !_description.eq_ignore_ascii_case(&String::from("success")) {
+            let _x = String::from("Request failed processing, checkout token not generated.");
+            return Err(_x.to_string());
         };
 
         let api_url = &self.create_subscription_sms_url;
@@ -347,8 +342,7 @@ impl AfricasTalking {
     pub async fn fetch_sms_subscriptions_async(
         &self,
         fetch_subscriptions_message: FetchSubscriptionsMessage,
-    ) -> std::result::Result<Option<ResultPremiumSmsFetchSubscriptionsMessage>, reqwest::Error>
-    {
+    ) -> std::result::Result<ResultPremiumSmsFetchSubscriptionsMessage, String> {
         let short_code = fetch_subscriptions_message.get_short_code();
         let _keyword = fetch_subscriptions_message.get_keyword();
         let last_received_id = fetch_subscriptions_message.get_last_received_id();
@@ -379,8 +373,7 @@ impl AfricasTalking {
     pub async fn delete_subscription_async(
         &self,
         delete_subscription_message: DeleteSubscriptionMessage,
-    ) -> std::result::Result<Option<ResultPremiumSmsDeleteSubscriptionMessage>, reqwest::Error>
-    {
+    ) -> std::result::Result<ResultPremiumSmsDeleteSubscriptionMessage, String> {
         let short_code = delete_subscription_message.get_short_code();
         let _keyword = delete_subscription_message.get_keyword();
         let phone_number = delete_subscription_message.get_phone_number();
@@ -406,7 +399,7 @@ impl AfricasTalking {
     pub async fn send_airtime_async(
         &self,
         airtime_message: AirtimeMessage,
-    ) -> std::result::Result<Option<ResultAirtimeMessage>, reqwest::Error> {
+    ) -> std::result::Result<ResultAirtimeMessage, String> {
         let max_num_retry = airtime_message.get_max_num_retry();
         let _recipients = airtime_message.get_recipients();
         let user_name = &self.user_name;
@@ -454,7 +447,7 @@ impl AfricasTalking {
     pub async fn find_airtime_transaction_status_async(
         &self,
         find_airtime_message: FindAirtimeMessage,
-    ) -> std::result::Result<Option<ResultFetchTransactionAirtimeMessage>, reqwest::Error> {
+    ) -> std::result::Result<ResultFetchTransactionAirtimeMessage, String> {
         let transaction_id = find_airtime_message.get_transaction_id();
         let user_name = &self.user_name;
         let api_key = &self.api_key;
@@ -476,7 +469,7 @@ impl AfricasTalking {
     pub async fn send_mobile_data_async(
         &self,
         mobile_data_message: MobileDataMessage,
-    ) -> std::result::Result<Option<ResultMobileDataMessage>, reqwest::Error> {
+    ) -> std::result::Result<ResultMobileDataMessage, String> {
         let product_name = mobile_data_message.get_product_name();
         let _recipients = mobile_data_message.get_recipients();
         let _quantity = mobile_data_message.get_quantity();
@@ -525,7 +518,7 @@ impl AfricasTalking {
     pub async fn find_mobile_data_transaction_async(
         &self,
         find_mobile_data_message: FindMobileDataMessage,
-    ) -> std::result::Result<Option<ResultFetchTransactionMobileDataMessage>, reqwest::Error> {
+    ) -> std::result::Result<ResultFetchTransactionMobileDataMessage, String> {
         let transaction_id = find_mobile_data_message.get_transaction_id();
         let user_name = &self.user_name;
         let api_key = &self.api_key;

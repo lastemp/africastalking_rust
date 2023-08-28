@@ -10,7 +10,7 @@ pub async fn send_message_async(
     user_name: String,
     api_key: String,
     api_url: String,
-) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
+) -> std::result::Result<ResultSmsMessage, String> {
     /*
     let params = [
         ("username", user_name),
@@ -46,16 +46,28 @@ pub async fn send_message_async(
 
     match res {
         Err(e) => {
-            return Err(e);
+            return Err(e.to_string());
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
-                let result_message = response.json::<ResultSmsMessage>().await?;
-
-                return Ok(Some(result_message));
+                //let result_message = response.json::<ResultSmsMessage>().await?;
+                //return Ok(Some(result_message));
+                match response.json::<ResultSmsMessage>().await {
+                    Ok(result_message) => {
+                        // Handle success case
+                        return Ok(result_message);
+                    }
+                    Err(_err) => {
+                        // Handle error case
+                        return Err(_err.to_string());
+                    }
+                }
             }
             s => {
-                return Ok(None);
+                // return Ok(None);
+                let mut _x = String::from("Request failed processing, status code: ");
+                _x.push_str(&s.to_string());
+                return Err(_x.to_string());
             }
         },
     };

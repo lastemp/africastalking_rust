@@ -7,7 +7,7 @@ pub async fn find_mobile_data_transaction_async(
     user_name: String,
     api_key: String,
     api_url: String,
-) -> std::result::Result<Option<ResultFetchTransactionMobileDataMessage>, reqwest::Error> {
+) -> std::result::Result<ResultFetchTransactionMobileDataMessage, String> {
     let params = [("username", user_name), ("transactionId", transaction_id)];
 
     let client = reqwest::Client::new();
@@ -20,18 +20,36 @@ pub async fn find_mobile_data_transaction_async(
 
     match res {
         Err(e) => {
-            return Err(e);
+            return Err(e.to_string());
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
+                /*
                 let result_message = response
                     .json::<ResultFetchTransactionMobileDataMessage>()
                     .await?;
 
                 return Ok(Some(result_message));
+                */
+                match response
+                    .json::<ResultFetchTransactionMobileDataMessage>()
+                    .await
+                {
+                    Ok(result_message) => {
+                        // Handle success case
+                        return Ok(result_message);
+                    }
+                    Err(_err) => {
+                        // Handle error case
+                        return Err(_err.to_string());
+                    }
+                }
             }
             s => {
-                return Ok(None);
+                //return Ok(None);
+                let mut _x = String::from("Request failed processing, status code: ");
+                _x.push_str(&s.to_string());
+                return Err(_x.to_string());
             }
         },
     };

@@ -12,7 +12,7 @@ pub async fn send_mobile_data_async(
     user_name: String,
     api_key: String,
     api_url: String,
-) -> std::result::Result<Option<ResultMobileDataMessage>, reqwest::Error> {
+) -> std::result::Result<ResultMobileDataMessage, String> {
     let params = [
         ("username", user_name),
         ("productName", product_name),
@@ -80,23 +80,29 @@ pub async fn send_mobile_data_async(
 
     match res {
         Err(e) => {
-            return Err(e);
+            return Err(e.to_string());
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
-                let result_message = response.json::<ResultMobileDataMessage>().await?;
-
-                return Ok(Some(result_message));
+                //let result_message = response.json::<ResultMobileDataMessage>().await?;
+                //return Ok(Some(result_message));
+                match response.json::<ResultMobileDataMessage>().await {
+                    Ok(result_message) => {
+                        // Handle success case
+                        return Ok(result_message);
+                    }
+                    Err(_err) => {
+                        // Handle error case
+                        return Err(_err.to_string());
+                    }
+                }
             }
             s => {
-                /*
-                let mut e = String::from("Received response status: ");
-                let status_code = s.to_string();
-                e.push_str(&status_code);
-                return Err(e);
-                */
-                println!("Received response status: {:?}", s);
-                return Ok(None);
+                //println!("Received response status: {:?}", s);
+                //return Ok(None);
+                let mut _x = String::from("Request failed processing, status code: ");
+                _x.push_str(&s.to_string());
+                return Err(_x.to_string());
             }
         },
     };
