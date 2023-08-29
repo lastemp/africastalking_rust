@@ -10,7 +10,7 @@ pub async fn test_send_airtime_async(user_name: String, api_key: String, phone_n
 
         let _result = AirtimeRecipient::new(phone_number, _amount, currency_code);
         if let Ok(airtime_recipient) = _result {
-            let max_num_retry: u8 = 1;
+            let max_num_retry = None;
             let mut _recipients: Vec<AirtimeRecipient> = Vec::new();
             _recipients.push(airtime_recipient);
 

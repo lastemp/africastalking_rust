@@ -25,7 +25,7 @@ async fn main() {
     let phone_number = PHONE_NO.to_string();
 
     // sms
-    //let x = sms::test_send_bulk_message_async(user_name, api_key, phone_number);
+    let x = sms::test_send_bulk_message_async(user_name, api_key, phone_number);
     //let x = sms::test_send_bulk_message(user_name, api_key, phone_number);
     //let x = sms::test_send_premium_message_async(user_name, api_key, phone_number);
     //let x = sms::test_fetch_sms_messages_async(user_name, api_key, phone_number);
@@ -39,7 +39,7 @@ async fn main() {
 
     // mobile_data
     //let x = mobile_data::test_send_mobile_data_async(user_name, api_key, phone_number);
-    let x = mobile_data::test_find_mobile_data_transaction_async(user_name, api_key, phone_number);
+    //let x = mobile_data::test_find_mobile_data_transaction_async(user_name, api_key, phone_number);
 
     x.await;
 }

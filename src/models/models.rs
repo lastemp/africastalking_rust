@@ -303,6 +303,11 @@ impl AirtimeRecipient {
         if currency_code.is_empty() || currency_code.replace(" ", "").trim().len() == 0 {
             return Err(String::from("currency code is empty"));
         }
+
+        if !currency_code.replace(" ", "").trim().len() == 3 {
+            return Err(String::from("Invalid currency code"));
+        }
+
         Ok(Self {
             phone_number,
             _amount,
@@ -325,18 +330,23 @@ impl AirtimeRecipient {
 
 #[derive(Debug)]
 pub struct AirtimeMessage {
-    max_num_retry: u8,
+    max_num_retry: Option<u8>,
     _recipients: Vec<AirtimeRecipient>,
 }
 
 impl AirtimeMessage {
-    pub fn new(max_num_retry: u8, _recipients: Vec<AirtimeRecipient>) -> Result<Self, String> {
-        if max_num_retry >= 0 && max_num_retry <= 8 {
-        } else {
-            return Err(String::from("Invalid max num retry"));
+    pub fn new(
+        max_num_retry: Option<u8>,
+        _recipients: Vec<AirtimeRecipient>,
+    ) -> Result<Self, String> {
+        if let Some(max_num_retry) = &max_num_retry {
+            if *max_num_retry == 0 {
+                return Err(String::from("Invalid max num retry"));
+            }
         }
 
         // validate _recipients
+        /*
         let _x = _recipients.len();
         if _x > 0 {
             for _recipient in _recipients.iter() {
@@ -355,17 +365,21 @@ impl AirtimeMessage {
                 if currency_code.is_empty() || currency_code.replace(" ", "").trim().len() == 0 {
                     return Err(String::from("currency code is empty"));
                 }
+
+                if !currency_code.replace(" ", "").trim().len() == 3 {
+                    return Err(String::from("Invalid currency code"));
+                }
             }
         } else {
             return Err(String::from("Invalid recipients"));
         }
-
+        */
         Ok(Self {
             max_num_retry,
             _recipients,
         })
     }
-    pub fn get_max_num_retry(&self) -> u8 {
+    pub fn get_max_num_retry(&self) -> Option<u8> {
         let max_num_retry = &self.max_num_retry;
         *max_num_retry
     }
@@ -472,6 +486,7 @@ impl MobileDataMessage {
         */
 
         // validate _recipients
+        /*
         let _x = _recipients.len();
         if _x > 0 {
             for _recipient in _recipients.iter() {
@@ -484,7 +499,7 @@ impl MobileDataMessage {
         } else {
             return Err(String::from("Invalid recipients"));
         }
-
+        */
         if _quantity <= 0 {
             return Err(String::from("Invalid quantity"));
         }

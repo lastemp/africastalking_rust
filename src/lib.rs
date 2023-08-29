@@ -537,19 +537,57 @@ impl AfricasTalking {
     }
 }
 
-/*
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    fn test_africas_talking() {
+        let user_name = String::from("sandbox");
+        let api_key = String::from("*************************************");
+
+        let _result = AfricasTalking::new(user_name, api_key);
+        assert_eq!(_result.is_ok(), true);
+    }
+
+    #[test]
+    fn test_bulk_sms_message() {
+        let user_name = String::from("sandbox");
+        let api_key = String::from("*************************************");
+
+        let _result = AfricasTalking::new(user_name, api_key);
+
+        if let Ok(africas_talking) = _result {
+            let _message = String::from("Have a great day!");
+            let _to = String::from("+2547*******0");
+            let _from = None;
+            let _enqueue = None;
+
+            let _result = BulkSmsMessage::new(_message, _to, _from, _enqueue);
+            assert_eq!(_result.is_ok(), true);
+        }
+    }
+
+    #[tokio::test]
+    async fn test_send_bulk_sms_message() {
+        let user_name = String::from("sandbox");
+        let api_key = String::from("*************************************");
+
+        let _result = AfricasTalking::new(user_name, api_key);
+
+        if let Ok(africas_talking) = _result {
+            let _message = String::from("Have a great day!");
+            let _to = String::from("+2547*******0");
+            let _from = None;
+            let _enqueue = None;
+
+            let _result = BulkSmsMessage::new(_message, _to, _from, _enqueue);
+
+            if let Ok(sms_message) = _result {
+                let _output = africas_talking.send_bulk_message_async(sms_message);
+                let _result = _output.await;
+                assert_eq!(_result.is_ok(), true);
+            }
+        }
     }
 }
-*/

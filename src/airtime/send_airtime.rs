@@ -3,18 +3,29 @@ use crate::util::util::build_headers;
 use reqwest::StatusCode;
 
 pub async fn send_airtime_async(
-    max_num_retry: u8,
+    max_num_retry: Option<u8>,
     _recipients: String,
     user_name: String,
     api_key: String,
     api_url: String,
 ) -> std::result::Result<ResultAirtimeMessage, String> {
+    /*
     let params = [
         ("username", user_name),
         ("maxNumRetry", max_num_retry.to_string()),
         ("recipients", _recipients),
     ];
-    println!("params: {:?}", &params);
+    */
+    let mut params = Vec::new();
+
+    params.push(("username", user_name));
+
+    if let Some(max_num_retry) = max_num_retry {
+        params.push(("maxNumRetry", max_num_retry.to_string()));
+    }
+
+    params.push(("recipients", _recipients));
+
     let client = reqwest::Client::new();
     let res = client
         .post(api_url)
