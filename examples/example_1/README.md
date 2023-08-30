@@ -1,7 +1,6 @@
 # example_1
 
-This is a full working example that uses the africastalking_rust sdk that seamlessly integrates with AfricasTalking Gateway.
-AfricasTalking is a Pan-African company that provides a variety of communication and payments API products. 
+This is a full working example which uses the [africastalking_rust sdk](https://github.com/lastemp/africastalking_rust).
 The API endpoints provided by AfricasTalking Gateway includes; SMS, USSD, Voice, Airtime and Payments (https://developers.africastalking.com/). 
 
 The example has below listed dependencies:
@@ -66,7 +65,3 @@ $ pwd
 	x.await;
 	}
    ```
-
-Please find below code samples and full working examples:
-
-   - See [the code samples](./code_samples/) for more info.	
