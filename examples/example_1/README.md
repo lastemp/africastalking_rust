@@ -60,7 +60,7 @@ $ pwd
 	}
    ```
 
-1. Run the server:
+1. Run the application:
 
    ```sh
    cargo run
