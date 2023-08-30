@@ -46,7 +46,7 @@ pub async fn test_send_mobile_data_async(user_name: String, api_key: String, pho
     if let Ok(africas_talking) = _result {
         let _result = MobileDataRecipient::new(phone_number);
         if let Ok(mobile_data_recipient) = _result {
-            let product_name = String::from("***");
+            let product_name = String::from("test");
             let mut _recipients: Vec<MobileDataRecipient> = Vec::new();
             _recipients.push(mobile_data_recipient);
             let _quantity = 50;
