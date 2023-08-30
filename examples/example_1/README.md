@@ -17,12 +17,6 @@ $ pwd
 .../example_1
 ```
 
-1. Run the server:
-
-   ```sh
-   cargo run
-   ```
-
 1. Using a different terminal execute requests by un-commenting code for the spefific function on main.rs. For example:
 
    ```rust
@@ -64,4 +58,10 @@ $ pwd
 
 	x.await;
 	}
+   ```
+
+1. Run the server:
+
+   ```sh
+   cargo run
    ```
