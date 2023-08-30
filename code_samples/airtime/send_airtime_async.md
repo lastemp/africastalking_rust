@@ -7,7 +7,7 @@ This example sends airtime message asynchronously.
 This should contain below code:
 
 ```rust
-mod sms;
+mod airtime;
 
 // SANDBOX
 const USERNAME_SANDBOX: &str = "***";
