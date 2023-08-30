@@ -23,5 +23,5 @@ cargo install --git https://github.com/lastemp/africastalking_rust
 
 Please find below code samples and full working examples:
 
-   See [the code samples](./code_samples/) for more info.	
-   See [the examples](./examples/) for full working examples.
+   - See [the code samples](./code_samples/) for more info.	
+   - See [the examples](./examples/) for full working examples.
