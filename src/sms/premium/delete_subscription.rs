@@ -31,13 +31,6 @@ pub async fn delete_subscription_async(
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
-                /*
-                let result_message = response
-                    .json::<ResultPremiumSmsDeleteSubscriptionMessage>()
-                    .await?;
-
-                return Ok(Some(result_message));
-                */
                 match response
                     .json::<ResultPremiumSmsDeleteSubscriptionMessage>()
                     .await
@@ -53,8 +46,6 @@ pub async fn delete_subscription_async(
                 }
             }
             s => {
-                //println!("status code: {:?}", s);
-                //return Ok(None);
                 let mut _x = String::from("Request failed processing, status code: ");
                 _x.push_str(&s.to_string());
                 return Err(_x.to_string());

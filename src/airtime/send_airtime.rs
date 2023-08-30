@@ -9,13 +9,6 @@ pub async fn send_airtime_async(
     api_key: String,
     api_url: String,
 ) -> std::result::Result<ResultAirtimeMessage, String> {
-    /*
-    let params = [
-        ("username", user_name),
-        ("maxNumRetry", max_num_retry.to_string()),
-        ("recipients", _recipients),
-    ];
-    */
     let mut params = Vec::new();
 
     params.push(("username", user_name));
@@ -40,8 +33,6 @@ pub async fn send_airtime_async(
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
-                //let result_message = response.json::<ResultAirtimeMessage>().await?;
-                //return Ok(Some(result_message));
                 match response.json::<ResultAirtimeMessage>().await {
                     Ok(result_message) => {
                         // Handle success case
@@ -54,7 +45,6 @@ pub async fn send_airtime_async(
                 }
             }
             s => {
-                //return Ok(None);
                 let mut _x = String::from("Request failed processing, status code: ");
                 _x.push_str(&s.to_string());
                 return Err(_x.to_string());

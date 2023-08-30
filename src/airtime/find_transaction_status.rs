@@ -24,13 +24,6 @@ pub async fn find_airtime_transaction_status_async(
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
-                /*
-                let result_message = response
-                    .json::<ResultFetchTransactionAirtimeMessage>()
-                    .await?;
-
-                return Ok(Some(result_message));
-                */
                 match response
                     .json::<ResultFetchTransactionAirtimeMessage>()
                     .await
@@ -46,7 +39,6 @@ pub async fn find_airtime_transaction_status_async(
                 }
             }
             s => {
-                //return Ok(None);
                 let mut _x = String::from("Request failed processing, status code: ");
                 _x.push_str(&s.to_string());
                 return Err(_x.to_string());

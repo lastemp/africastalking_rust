@@ -345,35 +345,6 @@ impl AirtimeMessage {
             }
         }
 
-        // validate _recipients
-        /*
-        let _x = _recipients.len();
-        if _x > 0 {
-            for _recipient in _recipients.iter() {
-                let phone_number = _recipient.get_phone_number();
-                let _amount = _recipient.get_amount();
-                let currency_code = _recipient.get_currency_code();
-
-                if phone_number.is_empty() || phone_number.replace(" ", "").trim().len() == 0 {
-                    return Err(String::from("phone number is empty"));
-                }
-
-                if _amount <= 0 {
-                    return Err(String::from("Invalid amount"));
-                }
-
-                if currency_code.is_empty() || currency_code.replace(" ", "").trim().len() == 0 {
-                    return Err(String::from("currency code is empty"));
-                }
-
-                if !currency_code.replace(" ", "").trim().len() == 3 {
-                    return Err(String::from("Invalid currency code"));
-                }
-            }
-        } else {
-            return Err(String::from("Invalid recipients"));
-        }
-        */
         Ok(Self {
             max_num_retry,
             _recipients,
@@ -478,28 +449,6 @@ impl MobileDataMessage {
         _validity: String,
         is_promo_bundle: bool,
     ) -> Result<Self, String> {
-        // product_name is optional
-        /*
-        if product_name.is_empty() || product_name.replace(" ", "").trim().len() == 0 {
-            return Err(String::from("product name is empty"));
-        }
-        */
-
-        // validate _recipients
-        /*
-        let _x = _recipients.len();
-        if _x > 0 {
-            for _recipient in _recipients.iter() {
-                let phone_number = _recipient.get_phone_number();
-
-                if phone_number.is_empty() || phone_number.replace(" ", "").trim().len() == 0 {
-                    return Err(String::from("phone number is empty"));
-                }
-            }
-        } else {
-            return Err(String::from("Invalid recipients"));
-        }
-        */
         if _quantity <= 0 {
             return Err(String::from("Invalid quantity"));
         }
@@ -627,23 +576,6 @@ impl Serialize for ParamValue {
         }
     }
 }
-/*
-#[derive(Serialize, Debug)]
-pub struct MobileDataPhoneNumberRequest {
-    pub phoneNumber: String,
-}
-
-#[derive(Serialize, Debug)]
-pub struct MobileDataRequest {
-    pub username: String,
-    pub productName: String,
-    pub recipients: Vec<MobileDataPhoneNumberRequest>,
-    pub quantity: u32,
-    pub unit: String,
-    pub validity: String,
-    pub isPromoBundle: bool,
-}
-*/
 
 // Premium Sms Create Subscription response
 #[derive(Deserialize, Debug)]

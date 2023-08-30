@@ -157,7 +157,6 @@ impl AfricasTalking {
         &self,
         sms_message: BulkSmsMessage,
     ) -> std::result::Result<ResultSmsMessage, String> {
-        // std::result::Result<Option<ResultSmsMessage>, String>
         let _message = sms_message.get_message();
         let _to: String = sms_message.get_recipient();
         let _from = sms_message.get_sender();
@@ -181,38 +180,11 @@ impl AfricasTalking {
         _result
     }
 
-    // SMS
-    pub fn send_bulk_message(
-        &self,
-        sms_message: BulkSmsMessage,
-    ) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
-        let _message = sms_message.get_message();
-        let _to: String = sms_message.get_recipient();
-        let _from = sms_message.get_sender();
-        let _enqueue = sms_message.get_enqueue();
-        let user_name = &self.user_name;
-        let api_key = &self.api_key;
-        let api_url = &self.sms_url;
-
-        let _result = sms::bulk::send_sms::send_message(
-            _message,
-            _to,
-            _from,
-            _enqueue,
-            user_name.to_string(),
-            api_key.to_string(),
-            api_url.to_string(),
-        );
-
-        _result
-    }
-
     // Premium SMS
     pub async fn send_premium_message_async(
         &self,
         sms_message: PremiumSmsMessage,
     ) -> std::result::Result<ResultSmsMessage, String> {
-        // std::result::Result<Option<ResultSmsMessage>, reqwest::Error>
         let _message = sms_message.get_message();
         let _to: String = sms_message.get_recipient();
         let _from = sms_message.get_sender();
@@ -285,8 +257,6 @@ impl AfricasTalking {
 
         let _output = sms::premium::create_subscription::generate_checkout_token_async(
             phone_number.to_string(),
-            user_name.to_string(),
-            api_key.to_string(),
             api_url.to_string(),
         );
 
@@ -296,25 +266,12 @@ impl AfricasTalking {
 
         let (checkout_token, _description) = match _result {
             Ok(_output) => {
-                /*
-                let _x = if let Some(_x) = _output {
-                    let _token = _x.token.as_ref().unwrap_or(&k);
-                    let _description = _x.description.as_ref().unwrap_or(&k);
-                    (_token.to_string(), _description.to_string())
-                } else {
-                    (k, String::from(""))
-                };
-                _x
-                */
                 let _token = _output.token.as_ref().unwrap_or(&k);
                 let _description = _output.description.as_ref().unwrap_or(&k);
                 (_token.to_string(), _description.to_string())
             }
             _ => (k, String::from("")),
         };
-
-        println!("checkout_token: {:?}", &checkout_token);
-        println!("_description: {:?}", &_description);
 
         // Proceed with processing if _description is Success
         if !_description.eq_ignore_ascii_case(&String::from("success")) {
@@ -428,7 +385,6 @@ impl AfricasTalking {
 
         // convert _recipients to json
         let _recipients = parse_airtime_input_recipients(airtime_input_recipients);
-        println!("_recipients: {:?}", &_recipients);
 
         let _output = airtime::send_airtime::send_airtime_async(
             max_num_retry,
@@ -495,7 +451,6 @@ impl AfricasTalking {
 
         // convert _recipients to json
         let _recipients = parse_mobile_data_input_recipients(mobile_data_input_recipients);
-        println!("_recipients: {:?}", &_recipients);
 
         let _output = mobile_data::send_mobile_data::send_mobile_data_async(
             product_name,

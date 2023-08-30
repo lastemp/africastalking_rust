@@ -15,22 +15,6 @@ pub async fn send_message_async(
     api_key: String,
     api_url: String,
 ) -> std::result::Result<ResultSmsMessage, String> {
-    // std::result::Result<Option<ResultSmsMessage>, reqwest::Error>
-    // 1 to enable || 0 to disable
-    //let _enqueue: u8 = if _enqueue { 1 } else { 0 };
-    /*
-    let params = [
-        ("username", user_name),
-        ("to", _to),
-        ("message", _message),
-        ("from", _from),
-        ("keyword", _keyword),
-        ("enqueue", _enqueue.to_string()),
-        ("linkId", link_id),
-        ("retryDurationInHours", retry_duration_in_hours.to_string()),
-        ("requestId", request_id),
-    ];
-    */
     let mut params = Vec::new();
 
     params.push(("username", user_name));
@@ -74,10 +58,6 @@ pub async fn send_message_async(
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
-                /*
-                let result_message = response.json::<ResultSmsMessage>().await?;
-                return Ok(Some(result_message));
-                */
                 match response.json::<ResultSmsMessage>().await {
                     Ok(result_message) => {
                         // Handle success case
@@ -90,45 +70,10 @@ pub async fn send_message_async(
                 }
             }
             s => {
-                //return Ok(None);
                 let mut _x = String::from("Request failed processing, status code: ");
                 _x.push_str(&s.to_string());
                 return Err(_x.to_string());
             }
         },
-    };
-}
-
-pub fn send_message(
-    _message: String,
-    _to: String,
-    _from: String,
-    user_name: String,
-    api_key: String,
-    api_url: String,
-) -> std::result::Result<Option<ResultSmsMessage>, reqwest::Error> {
-    let params = [
-        ("username", user_name),
-        ("to", _to),
-        ("message", _message),
-        ("from", _from),
-    ];
-
-    let client = reqwest::blocking::Client::new();
-    let res = client
-        .post(api_url)
-        .headers(build_headers(api_key))
-        .form(&params)
-        .send()?;
-
-    match res.status() {
-        StatusCode::CREATED => {
-            let result_sms_message = res.json::<ResultSmsMessage>()?;
-
-            return Ok(Some(result_sms_message));
-        }
-        s => {
-            return Ok(None);
-        }
     };
 }

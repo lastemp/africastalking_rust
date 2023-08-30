@@ -4,8 +4,6 @@ use reqwest::StatusCode;
 
 pub async fn generate_checkout_token_async(
     phone_number: String,
-    user_name: String,
-    api_key: String,
     api_url: String,
 ) -> std::result::Result<ResultPremiumSmsSubscriptionMessage, String> {
     let params = [("phoneNumber", phone_number)];
@@ -24,13 +22,6 @@ pub async fn generate_checkout_token_async(
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
-                /*
-                let result_message = response
-                    .json::<ResultPremiumSmsSubscriptionMessage>()
-                    .await?;
-
-                return Ok(Some(result_message));
-                */
                 match response.json::<ResultPremiumSmsSubscriptionMessage>().await {
                     Ok(result_message) => {
                         // Handle success case
@@ -43,8 +34,6 @@ pub async fn generate_checkout_token_async(
                 }
             }
             s => {
-                //println!("status code: {:?}", s);
-                //return Ok(None);
                 let mut _x = String::from("Request failed processing, status code: ");
                 _x.push_str(&s.to_string());
                 return Err(_x.to_string());
@@ -84,13 +73,6 @@ pub async fn subscribe_phone_number_async(
         }
         Ok(response) => match response.status() {
             StatusCode::CREATED => {
-                /*
-                let result_message = response
-                    .json::<ResultPremiumSmsSubscriptionMessage>()
-                    .await?;
-
-                return Ok(Some(result_message));
-                */
                 match response.json::<ResultPremiumSmsSubscriptionMessage>().await {
                     Ok(result_message) => {
                         // Handle success case
@@ -103,8 +85,6 @@ pub async fn subscribe_phone_number_async(
                 }
             }
             s => {
-                //println!("status code: {:?}", s);
-                //return Ok(None);
                 let mut _x = String::from("Request failed processing, status code: ");
                 _x.push_str(&s.to_string());
                 return Err(_x.to_string());
