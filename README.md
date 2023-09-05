@@ -11,7 +11,7 @@ The sdk has below listed dependencies:
 - [serde_urlencoded](https://github.com/nox/serde_urlencoded) for serialising to and deserialising from the application/x-www-form-urlencoded format
 - [chrono](https://github.com/chronotope/chrono) provides all functionality needed to do correct operations on dates and times
 - [base64](https://github.com/marshallpierce/rust-base64) Decode from Base64 format or encode into it
-- [tokio](https://github.com/tokio-rs/tokio) A runtime for writing reliable, asynchronous applications 
+- [tokio](https://github.com/tokio-rs/tokio) A runtime for writing reliable, asynchronous applications
 
 ## installation
 
